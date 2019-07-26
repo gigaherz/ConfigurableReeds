@@ -1,57 +1,77 @@
 package gigaherz.configurablecane;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockReed;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.statemap.StateMap;
-import net.minecraft.client.renderer.color.IBlockColor;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.biome.BiomeColorHelper;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.SoundType;
+import net.minecraft.block.material.Material;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
+import net.minecraft.world.biome.BiomeColors;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ColorHandlerEvent;
-import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.ObjectHolder;
 
-import javax.annotation.Nullable;
-
-@Mod(modid = ConfigurableCane.MODID)
-@Mod.EventBusSubscriber
+@Mod(ConfigurableCane.MODID)
 public class ConfigurableCane
 {
     public static final String MODID = "configurablecane";
 
-    @GameRegistry.ObjectHolder(MODID + ":reeds_top")
-    public static BlockReed top;
+    @ObjectHolder("configurablecane:sugar_cane_top")
+    public static Block CANE_TOP;
 
-    @SubscribeEvent
-    public static void registerBlocks(RegistryEvent.Register<Block> event)
+    public ConfigurableCane()
+    {
+
+        ModLoadingContext modLoadingContext = ModLoadingContext.get();
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+
+        modEventBus.addGenericListener(Block.class, this::registerBlocks);
+        modEventBus.addGenericListener(Item.class, this::registerItems);
+        modEventBus.addListener(this::modConfig);
+
+        modLoadingContext.registerConfig(ModConfig.Type.SERVER, Configurations.SERVER_SPEC);
+    }
+
+
+    public void modConfig(ModConfig.ModConfigEvent event)
+    {
+        ModConfig config = event.getConfig();
+        if (config.getSpec() == Configurations.SERVER_SPEC)
+            Configurations.refreshServer();
+    }
+
+    public void registerBlocks(RegistryEvent.Register<Block> event)
     {
         event.getRegistry().registerAll(
-                new BlockReedConfigurable(false).setRegistryName(Blocks.REEDS.getRegistryName()),
-                new BlockReedConfigurable(true).setRegistryName("reeds_top")
+                new ConfigurableSugarCaneBlock(false, Block.Properties.create(Material.PLANTS).doesNotBlockMovement().tickRandomly().hardnessAndResistance(0).sound(SoundType.PLANT)).setRegistryName(Blocks.SUGAR_CANE.getRegistryName()),
+                new ConfigurableSugarCaneBlock(true, Block.Properties.create(Material.PLANTS).doesNotBlockMovement().tickRandomly().hardnessAndResistance(0).sound(SoundType.PLANT)).setRegistryName("sugar_cane_top")
         );
     }
 
-    @Mod.EventBusSubscriber(value= Side.CLIENT, modid=ConfigurableCane.MODID)
+    public void registerItems(RegistryEvent.Register<Item> event)
+    {
+        event.getRegistry().registerAll(
+                new BlockItem(Blocks.SUGAR_CANE, new Item.Properties().group(Items.SUGAR_CANE.getGroup())).setRegistryName(Items.SUGAR_CANE.getRegistryName())
+        );
+    }
+
+    @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = ConfigurableCane.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
     static class ClientEvents
     {
         @SubscribeEvent
-        public static void modelsEvent(ModelRegistryEvent event)
-        {
-            ModelLoader.setCustomStateMapper(ConfigurableCane.top, (new StateMap.Builder()).ignore(BlockReed.AGE).build());
-        }
-
-        @SubscribeEvent
         public static void blockColors(ColorHandlerEvent.Block event)
         {
-            event.getBlockColors().registerBlockColorHandler((state, worldIn, pos, tintIndex) ->
-                    worldIn != null && pos != null ? BiomeColorHelper.getGrassColorAtPos(worldIn, pos) : -1, ConfigurableCane.top
+            event.getBlockColors().register((state, world, pos, tintIndex) ->
+                            world != null && pos != null ? BiomeColors.getGrassColor(world, pos) : -1,
+                    ConfigurableCane.CANE_TOP
             );
         }
     }
