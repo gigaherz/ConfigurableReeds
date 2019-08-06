@@ -1,9 +1,6 @@
 package gigaherz.configurablecane;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.SugarCaneBlock;
+import net.minecraft.block.*;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
@@ -12,11 +9,11 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import java.util.Random;
 
-class ConfigurableSugarCaneBlock extends SugarCaneBlock
+class ConfigurableCactusBlock extends CactusBlock
 {
     boolean isTop;
 
-    public ConfigurableSugarCaneBlock(boolean isTop, Properties properties)
+    public ConfigurableCactusBlock(boolean isTop, Properties properties)
     {
         super(properties);
         this.isTop = isTop;
@@ -26,9 +23,9 @@ class ConfigurableSugarCaneBlock extends SugarCaneBlock
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext ctx)
     {
-        if (Configurations.SERVER.sugarCane.kelpLikeGrowth.get())
+        if (Configurations.SERVER.cactus.kelpLikeGrowth.get())
         {
-            return randomAge(ctx.getWorld(), ConfigurableCane.CANE_TOP.getDefaultState(), Configurations.SERVER.sugarCane.maxAge.get());
+            return randomAge(ctx.getWorld(), ConfigurableCane.CACTUS_TOP.getDefaultState(), Configurations.SERVER.cactus.maxAge.get());
         }
         else
         {
@@ -45,7 +42,7 @@ class ConfigurableSugarCaneBlock extends SugarCaneBlock
     public boolean isValidPosition(BlockState state, IWorldReader world, BlockPos pos)
     {
         Block blockBelow = world.getBlockState(pos.down()).getBlock();
-        if (blockBelow == Blocks.SUGAR_CANE || blockBelow == ConfigurableCane.CANE_TOP)
+        if (blockBelow == Blocks.CACTUS || blockBelow == ConfigurableCane.CACTUS_TOP)
         {
             return true;
         }
@@ -56,7 +53,7 @@ class ConfigurableSugarCaneBlock extends SugarCaneBlock
     @Override
     public void tick(BlockState state, World world, BlockPos pos, Random rand)
     {
-        if (!Configurations.SERVER.sugarCane.enabled.get())
+        if (!Configurations.SERVER.cactus.enabled.get())
         {
             super.tick(state, world, pos, rand);
             return;
@@ -68,24 +65,24 @@ class ConfigurableSugarCaneBlock extends SugarCaneBlock
             return;
         }
 
-        int maxAge = Configurations.SERVER.sugarCane.maxAge.get();
-        int maxHeight = Configurations.SERVER.sugarCane.maxHeight.get();
-        boolean kelpLikeGrowth = Configurations.SERVER.sugarCane.kelpLikeGrowth.get();
+        int maxAge = Configurations.SERVER.cactus.maxAge.get();
+        int maxHeight = Configurations.SERVER.cactus.maxHeight.get();
+        boolean kelpLikeGrowth = Configurations.SERVER.cactus.kelpLikeGrowth.get();
         if (isTop)
         {
             if (kelpLikeGrowth && world.isAirBlock(pos.up())
                     && getStackHeight(world, pos) < maxHeight)
             {
                 int age = state.get(AGE);
-                if (age < maxAge && rand.nextDouble() < Configurations.SERVER.sugarCane.kelpLikeGrowthChance.get())
+                if (age < maxAge && rand.nextDouble() < Configurations.SERVER.cactus.kelpLikeGrowthChance.get())
                 {
                     world.setBlockState(pos.up(), state.with(AGE, age + 1));
-                    world.setBlockState(pos, Blocks.SUGAR_CANE.getDefaultState().with(AGE, 15), 2);
+                    world.setBlockState(pos, Blocks.CACTUS.getDefaultState().with(AGE, 15), 2);
                 }
             }
             else
             {
-                world.setBlockState(pos, Blocks.SUGAR_CANE.getDefaultState(), 2);
+                world.setBlockState(pos, Blocks.CACTUS.getDefaultState(), 2);
             }
             return;
         }
@@ -97,7 +94,7 @@ class ConfigurableSugarCaneBlock extends SugarCaneBlock
                 int stackHeight = getStackHeight(world, pos);
                 if (stackHeight < maxHeight)
                 {
-                    world.setBlockState(pos, randomAge(world, ConfigurableCane.CANE_TOP.getDefaultState(), maxAge), 2);
+                    world.setBlockState(pos, randomAge(world, ConfigurableCane.CACTUS_TOP.getDefaultState(), maxAge), 2);
                 }
             }
         }
@@ -129,7 +126,7 @@ class ConfigurableSugarCaneBlock extends SugarCaneBlock
     private int getStackHeight(World world, BlockPos pos)
     {
         int stackHeight = 1;
-        while (world.getBlockState(pos.down(stackHeight)).getBlock() == Blocks.SUGAR_CANE)
+        while (world.getBlockState(pos.down(stackHeight)).getBlock() == Blocks.CACTUS)
         {
             ++stackHeight;
         }

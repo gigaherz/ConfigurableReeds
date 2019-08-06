@@ -27,6 +27,9 @@ public class ConfigurableCane
     @ObjectHolder("configurablecane:sugar_cane_top")
     public static Block CANE_TOP;
 
+    @ObjectHolder("configurablecane:cactus_top")
+    public static Block CACTUS_TOP;
+
     public ConfigurableCane()
     {
 
@@ -35,31 +38,34 @@ public class ConfigurableCane
 
         modEventBus.addGenericListener(Block.class, this::registerBlocks);
         modEventBus.addGenericListener(Item.class, this::registerItems);
-        modEventBus.addListener(this::modConfig);
 
         modLoadingContext.registerConfig(ModConfig.Type.SERVER, Configurations.SERVER_SPEC);
-    }
-
-
-    public void modConfig(ModConfig.ModConfigEvent event)
-    {
-        ModConfig config = event.getConfig();
-        if (config.getSpec() == Configurations.SERVER_SPEC)
-            Configurations.refreshServer();
     }
 
     public void registerBlocks(RegistryEvent.Register<Block> event)
     {
         event.getRegistry().registerAll(
-                new ConfigurableSugarCaneBlock(false, Block.Properties.create(Material.PLANTS).doesNotBlockMovement().tickRandomly().hardnessAndResistance(0).sound(SoundType.PLANT)).setRegistryName(Blocks.SUGAR_CANE.getRegistryName()),
-                new ConfigurableSugarCaneBlock(true, Block.Properties.create(Material.PLANTS).doesNotBlockMovement().tickRandomly().hardnessAndResistance(0).sound(SoundType.PLANT)).setRegistryName("sugar_cane_top")
+                new ConfigurableSugarCaneBlock(false,
+                        Block.Properties.create(Material.PLANTS).doesNotBlockMovement().tickRandomly().hardnessAndResistance(0).sound(SoundType.PLANT)
+                ).setRegistryName(Blocks.SUGAR_CANE.getRegistryName()),
+                new ConfigurableSugarCaneBlock(true,
+                        Block.Properties.create(Material.PLANTS).doesNotBlockMovement().tickRandomly().hardnessAndResistance(0).sound(SoundType.PLANT).lootFrom(Blocks.SUGAR_CANE)
+                ).setRegistryName("sugar_cane_top"),
+
+                new ConfigurableCactusBlock(false,
+                        Block.Properties.create(Material.CACTUS).tickRandomly().hardnessAndResistance(0.4F).sound(SoundType.CLOTH)
+                ).setRegistryName(Blocks.CACTUS.getRegistryName()),
+                new ConfigurableCactusBlock(true,
+                        Block.Properties.create(Material.CACTUS).tickRandomly().hardnessAndResistance(0.4F).sound(SoundType.CLOTH).lootFrom(Blocks.CACTUS)
+                ).setRegistryName("cactus_top")
         );
     }
 
     public void registerItems(RegistryEvent.Register<Item> event)
     {
         event.getRegistry().registerAll(
-                new BlockItem(Blocks.SUGAR_CANE, new Item.Properties().group(Items.SUGAR_CANE.getGroup())).setRegistryName(Items.SUGAR_CANE.getRegistryName())
+                new BlockItem(Blocks.SUGAR_CANE, new Item.Properties().group(Items.SUGAR_CANE.getGroup())).setRegistryName(Items.SUGAR_CANE.getRegistryName()),
+                new BlockItem(Blocks.CACTUS, new Item.Properties().group(Items.CACTUS.getGroup())).setRegistryName(Items.CACTUS.getRegistryName())
         );
     }
 
