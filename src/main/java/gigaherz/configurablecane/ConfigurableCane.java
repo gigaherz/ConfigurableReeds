@@ -25,7 +25,7 @@ public class ConfigurableCane
     public static final String MODID = "configurablecane";
 
     @ObjectHolder("configurablecane:sugar_cane_top")
-    public static Block CANE_TOP;
+    public static Block SUGAR_CANE_TOP;
 
     @ObjectHolder("configurablecane:cactus_top")
     public static Block CACTUS_TOP;
@@ -77,7 +77,7 @@ public class ConfigurableCane
         {
             event.getBlockColors().register((state, world, pos, tintIndex) ->
                             world != null && pos != null ? BiomeColors.getGrassColor(world, pos) : -1,
-                    ConfigurableCane.CANE_TOP
+                    ConfigurableCane.SUGAR_CANE_TOP
             );
         }
     }

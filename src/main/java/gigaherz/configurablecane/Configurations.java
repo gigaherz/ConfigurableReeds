@@ -35,7 +35,7 @@ class Configurations
                 maxHeight = builder
                         .comment("Sets the maximum height the " + display + " can grow to.")
                         .translation("text.configurablecane.config."+category+".max_height")
-                        .defineInRange("MaxHeight", 3, 0, 15);
+                        .defineInRange("MaxHeight", 3, 0, 255);
                 maxAge = builder
                         .comment("Sets the maximum age value the " + display + " will grow to.")
                         .translation("text.configurablecane.config."+category+".max_age")
