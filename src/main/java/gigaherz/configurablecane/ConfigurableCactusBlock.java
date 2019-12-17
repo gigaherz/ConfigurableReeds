@@ -1,7 +1,6 @@
 package gigaherz.configurablecane;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.CactusBlock;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.util.math.BlockPos;
@@ -22,8 +21,8 @@ class ConfigurableCactusBlock extends CactusBlock
                 Configurations.SERVER.cactus,
                 isTop,
                 () -> this,
-                () -> Blocks.CACTUS,
-                () -> ConfigurableCane.CACTUS_TOP
+                ConfigurableCane.CACTUS_REPLACEMENT,
+                ConfigurableCane.CACTUS_TOP
         );
     }
 

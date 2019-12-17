@@ -1,7 +1,6 @@
 package gigaherz.configurablecane;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.SugarCaneBlock;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.util.math.BlockPos;
@@ -22,8 +21,8 @@ class ConfigurableSugarCaneBlock extends SugarCaneBlock
                 Configurations.SERVER.sugarCane,
                 isTop,
                 () -> this,
-                () -> Blocks.SUGAR_CANE,
-                () -> ConfigurableCane.SUGAR_CANE_TOP
+                ConfigurableCane.SUGAR_CANE_REPLACEMENT,
+                ConfigurableCane.SUGAR_CANE_TOP
         );
     }
 
