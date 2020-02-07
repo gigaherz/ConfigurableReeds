@@ -6,6 +6,7 @@ import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -41,7 +42,7 @@ class ConfigurableSugarCaneBlock extends SugarCaneBlock
     }
 
     @Override
-    public void tick(BlockState state, World world, BlockPos pos, Random rand)
+    public void tick(BlockState state, ServerWorld world, BlockPos pos, Random rand)
     {
         if (!manager.tick(state, world, pos, rand))
             super.tick(state, world, pos, rand);

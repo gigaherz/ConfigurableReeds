@@ -8,6 +8,8 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.world.biome.BiomeColors;
+import net.minecraft.world.biome.DefaultBiomeFeatures;
+import net.minecraft.world.gen.blockstateprovider.SimpleBlockStateProvider;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -15,7 +17,9 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -75,7 +79,17 @@ public class ConfigurableCane
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
 
+        modEventBus.addListener(this::loadComplete);
+
         modLoadingContext.registerConfig(ModConfig.Type.SERVER, Configurations.SERVER_SPEC);
+    }
+
+    public void loadComplete(FMLLoadCompleteEvent event)
+    {
+        DefaultBiomeFeatures.CACTUS = Blocks.CACTUS.getDefaultState();
+        DefaultBiomeFeatures.SUGAR_CANE = Blocks.SUGAR_CANE.getDefaultState();
+        DefaultBiomeFeatures.CACTUS_CONFIG.field_227289_a_ = new SimpleBlockStateProvider(DefaultBiomeFeatures.CACTUS);
+        DefaultBiomeFeatures.SUGAR_CANE_CONFIG.field_227289_a_ = new SimpleBlockStateProvider(DefaultBiomeFeatures.SUGAR_CANE);
     }
 
     @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = ConfigurableCane.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -85,7 +99,7 @@ public class ConfigurableCane
         public static void blockColors(ColorHandlerEvent.Block event)
         {
             event.getBlockColors().register((state, world, pos, tintIndex) ->
-                            world != null && pos != null ? BiomeColors.getGrassColor(world, pos) : -1,
+                            world != null && pos != null ? BiomeColors.func_228358_a_(world, pos) : -1,
                     ConfigurableCane.SUGAR_CANE_TOP.get()
             );
         }

@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[28,)"
+loaderVersion="[29,)"
 #updateJSONURL="http://myurl.me/"
 issueTrackerURL="https://github.com/gigaherz/ConfigurableReeds/issues"
 displayURL="https://github.com/gigaherz/ConfigurableReeds"
@@ -9,7 +9,7 @@ authors="gigaherz"
 
 [[mods]]
 modId="configurablecane"
-version="${version}"
+version="${file.jarVersion}"
 displayName="Configurable Cane"
 description='''
 Lets you tweak the growth of sugarcane
@@ -18,12 +18,13 @@ Lets you tweak the growth of sugarcane
 [[dependencies.configurablecane]]
    modId="forge"
    mandatory=true
-   versionRange="[28.0.41,)"
+   versionRange="[29.0.0,)"
    ordering="NONE"
    side="BOTH"
 [[dependencies.configurablecane]]
    modId="minecraft"
    mandatory=true
-   versionRange="[1.14.4,1.15)"
+   versionRange="[1.15,1.16)"
    ordering="NONE"
    side="BOTH"
+
