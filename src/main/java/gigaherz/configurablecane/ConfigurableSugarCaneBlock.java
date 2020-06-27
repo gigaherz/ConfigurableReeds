@@ -42,9 +42,9 @@ class ConfigurableSugarCaneBlock extends SugarCaneBlock
     }
 
     @Override
-    public void tick(BlockState state, ServerWorld world, BlockPos pos, Random rand)
+    public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random rand)
     {
-        if (!manager.tick(state, world, pos, rand))
-            super.tick(state, world, pos, rand);
+        if (!manager.randomTick(state, world, pos, rand))
+            super.randomTick(state, world, pos, rand);
     }
 }

@@ -3,7 +3,6 @@ package gigaherz.configurablecane;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.CactusBlock;
 import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.server.ServerWorld;
@@ -43,9 +42,9 @@ class ConfigurableCactusBlock extends CactusBlock
     }
 
     @Override
-    public void tick(BlockState state, ServerWorld world, BlockPos pos, Random rand)
+    public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random rand)
     {
-        if (!manager.tick(state, world, pos, rand))
-            super.tick(state, world, pos, rand);
+        if (!manager.randomTick(state, world, pos, rand))
+            super.randomTick(state, world, pos, rand);
     }
 }

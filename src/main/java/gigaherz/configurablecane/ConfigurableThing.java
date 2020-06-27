@@ -69,12 +69,14 @@ public class ConfigurableThing
         return stackHeight;
     }
 
-    public boolean tick(BlockState state, World world, BlockPos pos, Random rand)
+    public boolean randomTick(BlockState state, World world, BlockPos pos, Random rand)
     {
         if (!config.enabled.get())
         {
             return false;
         }
+
+        if (!world.isAreaLoaded(pos, 1)) return true; // Forge: prevent growing cactus from loading unloaded chunks with block update
 
         if (!state.isValidPosition(world, pos))
         {
