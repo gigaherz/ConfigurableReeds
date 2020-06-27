@@ -19,6 +19,7 @@ class ConfigurableSugarCaneBlock extends SugarCaneBlock
         super(properties);
         manager = new ConfigurableThing(
                 Configurations.SERVER.sugarCane,
+                SugarCaneBlock.AGE,
                 isTop,
                 () -> this,
                 ConfigurableCane.SUGAR_CANE_REPLACEMENT,
