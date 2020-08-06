@@ -6,6 +6,7 @@ displayURL="https://github.com/gigaherz/ConfigurableReeds"
 logoFile="logo.png"
 credits="Thanks for this example mod goes to Java"
 authors="gigaherz"
+license="BSD (3 clause)"
 
 [[mods]]
 modId="configurablecane"

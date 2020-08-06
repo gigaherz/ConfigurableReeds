@@ -14,9 +14,15 @@ apply plugin: 'maven-publish'
 
 repositories {
     mavenLocal()
+    maven {
+        url 'https://maven.tterrag.com/'
+    }
+    maven {
+        url 'https://www.dogforce-games.com/maven/'
+    }
 }
 
-version = "1.5.2"
+version = "1.5.3"
 group = "gigaherz.configurablecane" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "ConfigurableCane-UNKNOWN"
 
@@ -27,7 +33,7 @@ project.afterEvaluate {
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
 minecraft {
-    mappings channel: 'snapshot', version: '20200514-1.16'
+    mappings channel: 'snapshot', version: '20200723-1.16.1'
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -65,10 +71,14 @@ minecraft {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.16.1-32.0.23'
+    minecraft 'net.minecraftforge:forge:1.16.1-32.0.99'
 }
 
 jar {
+    from('/') {
+        include 'LICENSE.txt'
+    }
+
     manifest {
         attributes([
                 "Specification-Title": "configurablecane",
