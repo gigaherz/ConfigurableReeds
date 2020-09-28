@@ -1,11 +1,9 @@
 package gigaherz.configurablecane.mixin;
 
-import gigaherz.configurablecane.ConfigurableCane;
 import gigaherz.configurablecane.ConfigurableThing;
-import gigaherz.configurablecane.Configurations;
+import gigaherz.configurablecane.IConfigurable;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.CactusBlock;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.util.math.BlockPos;

@@ -1,8 +1,5 @@
 package gigaherz.configurablecane;
 
-import gigaherz.configurablecane.mixin.CactusBlockMixin;
-import gigaherz.configurablecane.mixin.IConfigurable;
-import gigaherz.configurablecane.mixin.SugarCaneBlockMixin;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.CactusBlock;

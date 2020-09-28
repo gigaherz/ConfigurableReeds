@@ -1,6 +1,7 @@
 package gigaherz.configurablecane.mixin;
 
 import gigaherz.configurablecane.ConfigurableThing;
+import gigaherz.configurablecane.IConfigurable;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SugarCaneBlock;
