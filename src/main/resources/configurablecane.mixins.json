@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "gigaherz.configurablecane.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "configurablecane.refmap.json",
+  "mixins": [
+    "CactusBlockMixin",
+    "SugarCaneBlockMixin"
+  ],
+  "client": [],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

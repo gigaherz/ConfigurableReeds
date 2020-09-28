@@ -76,7 +76,8 @@ public class ConfigurableThing
             return false;
         }
 
-        if (!world.isAreaLoaded(pos, 1)) return true; // Forge: prevent growing cactus from loading unloaded chunks with block update
+        if (!world.isAreaLoaded(pos, 1))
+            return true; // Forge: prevent growing cactus from loading unloaded chunks with block update
 
         if (!state.isValidPosition(world, pos))
         {

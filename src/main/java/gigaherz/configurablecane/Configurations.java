@@ -3,7 +3,7 @@ package gigaherz.configurablecane;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
-class Configurations
+public class Configurations
 {
     public static final ServerConfig SERVER;
     public static final ForgeConfigSpec SERVER_SPEC;
