@@ -5,8 +5,11 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.CactusBlock;
 import net.minecraft.block.SugarCaneBlock;
 
+import javax.annotation.Nullable;
+
 public interface IConfigurable
 {
+    @Nullable
     ConfigurableThing getManager();
 
     void setManager(ConfigurableThing manager);
@@ -19,8 +22,8 @@ public interface IConfigurable
                 isTop,
                 () -> block,
                 () -> Blocks.CACTUS,
-                ConfigurableCane.CACTUS_TOP
-        ));
+                ConfigurableCane.CACTUS_TOP,
+                true));
     }
 
     static void initializeSugarcane(Block block, boolean isTop)
@@ -31,7 +34,7 @@ public interface IConfigurable
                 isTop,
                 () -> block,
                 () -> Blocks.SUGAR_CANE,
-                ConfigurableCane.SUGAR_CANE_TOP
-        ));
+                ConfigurableCane.SUGAR_CANE_TOP,
+                false));
     }
 }

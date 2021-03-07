@@ -1,6 +1,9 @@
 package gigaherz.configurablecane;
 
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class Configurations
@@ -15,15 +18,47 @@ public class Configurations
         SERVER = specPair.getLeft();
     }
 
+    @Mod.EventBusSubscriber(modid=ConfigurableCane.MODID, bus= Mod.EventBusSubscriber.Bus.MOD)
+    public static class ConfigEvents
+    {
+        @SubscribeEvent
+        public static void modConfig(ModConfig.ModConfigEvent event)
+        {
+            if(event.getConfig().getSpec() == SERVER_SPEC)
+            {
+                SERVER.cactus.updateCachedValues();
+                SERVER.sugarCane.updateCachedValues();
+            }
+        }
+    }
+
     public static class ServerConfig
     {
         public static class ThingConfig
         {
-            public final ForgeConfigSpec.BooleanValue enabled;
-            public final ForgeConfigSpec.IntValue maxHeight;
-            public final ForgeConfigSpec.IntValue maxAge;
-            public final ForgeConfigSpec.BooleanValue kelpLikeGrowth;
-            public final ForgeConfigSpec.DoubleValue kelpLikeGrowthChance;
+            private final ForgeConfigSpec.BooleanValue enabled;
+            private final ForgeConfigSpec.IntValue maxHeight;
+            private final ForgeConfigSpec.IntValue maxAge;
+            private final ForgeConfigSpec.BooleanValue kelpLikeGrowth;
+            private final ForgeConfigSpec.DoubleValue kelpLikeGrowthChance;
+            private final ForgeConfigSpec.DoubleValue kelpLikeAgeChance;
+
+            public boolean enabledValue;
+            public int maxHeightValue;
+            public int maxAgeValue;
+            public boolean kelpLikeGrowthValue;
+            public double kelpLikeGrowthChanceValue;
+            public double kelpLikeAgeChanceValue;
+
+            public void updateCachedValues()
+            {
+                enabledValue = enabled.get();
+                maxHeightValue = maxHeight.get();
+                maxAgeValue = maxAge.get();
+                kelpLikeGrowthValue = kelpLikeGrowth.get();
+                kelpLikeGrowthChanceValue = kelpLikeGrowthChance.get();
+                kelpLikeAgeChanceValue = kelpLikeAgeChance.get();
+            }
 
             ThingConfig(ForgeConfigSpec.Builder builder, String category, String display)
             {
@@ -49,6 +84,10 @@ public class Configurations
                         .comment("If KelpLikeGrowth is TRUE, this value indicates the chance the " + display + " will grow.")
                         .translation("text.configurablecane.config." + category + ".kelp_like_growth_chance")
                         .defineInRange("KelpLikeGrowthChance", 0.075, 0.0, 1.0);
+                kelpLikeAgeChance = builder
+                        .comment("If KelpLikeGrowth is TRUE, this value indicates the chance the top " + display + " age will increase when growing.")
+                        .translation("text.configurablecane.config." + category + ".kelp_like_growth_chance")
+                        .defineInRange("KelpLikeAgeChance", 0.75, 0.0, Double.MAX_VALUE);
                 builder.pop();
             }
         }
@@ -62,4 +101,5 @@ public class Configurations
             cactus = new ThingConfig(builder, "cactus", "cactus");
         }
     }
+
 }

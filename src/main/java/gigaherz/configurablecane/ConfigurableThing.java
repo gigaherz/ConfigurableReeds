@@ -8,7 +8,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 
-import java.util.Optional;
+import javax.annotation.Nullable;
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -20,8 +20,9 @@ public class ConfigurableThing
     private final Supplier<Block> ownerBlock;
     private final Supplier<Block> mainBlock;
     private final Supplier<Block> topBlock;
+    private final boolean stupidEventFiresAbove;
 
-    public ConfigurableThing(Configurations.ServerConfig.ThingConfig config, IntegerProperty ageProperty, boolean isTop, Supplier<Block> ownerBlock, Supplier<Block> mainBlock, Supplier<Block> topBlock)
+    public ConfigurableThing(Configurations.ServerConfig.ThingConfig config, IntegerProperty ageProperty, boolean isTop, Supplier<Block> ownerBlock, Supplier<Block> mainBlock, Supplier<Block> topBlock, boolean stupidEventFiresAbove)
     {
         this.config = config;
         this.isTop = isTop;
@@ -29,6 +30,7 @@ public class ConfigurableThing
         this.mainBlock = mainBlock;
         this.topBlock = topBlock;
         this.ageProperty = ageProperty;
+        this.stupidEventFiresAbove = stupidEventFiresAbove;
     }
 
     public boolean canPlaceOn(Block blockBelow)
@@ -47,15 +49,16 @@ public class ConfigurableThing
         return canPlaceOn(blockBelow);
     }
 
-    public Optional<BlockState> getStateForPlacement(BlockItemUseContext ctx)
+    @Nullable
+    public BlockState getStateForPlacement(BlockItemUseContext ctx)
     {
-        if (Configurations.SERVER.cactus.kelpLikeGrowth.get())
+        if (Configurations.SERVER.cactus.kelpLikeGrowthValue)
         {
-            return Optional.of(randomAge(ctx.getWorld(), topBlock.get().getDefaultState(), config.maxAge.get()));
+            return randomAge(ctx.getWorld(), topBlock.get().getDefaultState(), config.maxAgeValue);
         }
         else
         {
-            return Optional.empty();
+            return null;
         }
     }
 
@@ -71,7 +74,7 @@ public class ConfigurableThing
 
     public boolean randomTick(BlockState state, World world, BlockPos pos, Random rand)
     {
-        if (!config.enabled.get())
+        if (!config.enabledValue)
         {
             return false;
         }
@@ -85,10 +88,10 @@ public class ConfigurableThing
             return true;
         }
 
-        int maxAge = config.maxAge.get();
-        int maxHeight = config.maxHeight.get();
+        int maxAge = config.maxAgeValue;
+        int maxHeight = config.maxHeightValue;
 
-        if (config.kelpLikeGrowth.get())
+        if (config.kelpLikeGrowthValue)
         {
             return kelpLikeGrowth(state, world, pos, maxAge, maxHeight, rand);
         }
@@ -112,7 +115,8 @@ public class ConfigurableThing
         if (getStackHeight(world, pos) >= maxHeight)
             return true;
 
-        if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(world, pos, state, true))
+        BlockPos eventPos = stupidEventFiresAbove ? pos.up() : pos;
+        if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(world, eventPos, state, true))
         {
             int age = state.get(ageProperty);
             if (age >= maxAge)
@@ -141,10 +145,19 @@ public class ConfigurableThing
         if (isTop)
         {
             int age = state.get(ageProperty);
-            if (age < maxAge && rand.nextDouble() < config.kelpLikeGrowthChance.get())
+            if (age < maxAge && rand.nextDouble() < config.kelpLikeGrowthChanceValue)
             {
-                world.setBlockState(pos.up(), state.with(ageProperty, age + 1));
-                world.setBlockState(pos, mainBlock.get().getDefaultState().with(ageProperty, 15), 2);
+                BlockPos eventPos = stupidEventFiresAbove ? pos.up() : pos;
+                if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(world, eventPos, state, true))
+                {
+                    int ageGrowthInt = (int) config.kelpLikeAgeChanceValue;
+                    double random = config.kelpLikeAgeChanceValue - ageGrowthInt;
+                    if (random > 0 && rand.nextDouble() < random)
+                        ageGrowthInt++;
+                    world.setBlockState(pos.up(), state.with(ageProperty, age + ageGrowthInt));
+                    world.setBlockState(pos, mainBlock.get().getDefaultState().with(ageProperty, 15), 2);
+                    net.minecraftforge.common.ForgeHooks.onCropsGrowPost(world, pos, state);
+                }
             }
         }
         else

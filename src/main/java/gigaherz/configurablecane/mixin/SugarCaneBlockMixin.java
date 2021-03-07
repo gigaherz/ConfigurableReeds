@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.Random;
 
@@ -23,14 +24,15 @@ public class SugarCaneBlockMixin extends Block implements IConfigurable
 {
     private ConfigurableThing manager;
 
+    @Nullable
     @Override
-    public ConfigurableThing getManager()
+    public final ConfigurableThing getManager()
     {
         return manager;
     }
 
     @Override
-    public void setManager(ConfigurableThing manager)
+    public final void setManager(ConfigurableThing manager)
     {
         this.manager = manager;
     }
@@ -43,11 +45,13 @@ public class SugarCaneBlockMixin extends Block implements IConfigurable
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext ctx)
     {
-        Optional<BlockState> state = getManager().getStateForPlacement(ctx);
-        //noinspection OptionalIsPresent
-        if (state.isPresent())
+        if (getManager() != null)
         {
-            return state.get();
+            BlockState state = getManager().getStateForPlacement(ctx);
+            if (state != null)
+            {
+                return state;
+            }
         }
         return super.getStateForPlacement(ctx);
     }
@@ -55,7 +59,7 @@ public class SugarCaneBlockMixin extends Block implements IConfigurable
     @Inject(method = "isValidPosition", at = @At("HEAD"), cancellable = true)
     public void isValidPosition(BlockState state, IWorldReader world, BlockPos pos, CallbackInfoReturnable<Boolean> ci)
     {
-        if (getManager().isValidPosition(world, pos))
+        if (getManager() != null && getManager().isValidPosition(world, pos))
         {
             ci.setReturnValue(true);
         }
@@ -64,7 +68,7 @@ public class SugarCaneBlockMixin extends Block implements IConfigurable
     @Inject(method = "randomTick", at = @At("HEAD"), cancellable = true)
     public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random rand, CallbackInfo ci)
     {
-        if (getManager().randomTick(state, world, pos, rand))
+        if (getManager() != null && getManager().randomTick(state, world, pos, rand))
         {
             ci.cancel();
         }
