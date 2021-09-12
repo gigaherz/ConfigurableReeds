@@ -2,6 +2,6 @@
 @ParametersAreNonnullByDefault
 package gigaherz.configurablecane.mixin;
 
-import mcp.MethodsReturnNonnullByDefault;
+import net.minecraft.MethodsReturnNonnullByDefault;
 
 import javax.annotation.ParametersAreNonnullByDefault;

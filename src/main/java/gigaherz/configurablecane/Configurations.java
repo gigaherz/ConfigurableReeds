@@ -3,7 +3,7 @@ package gigaherz.configurablecane;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class Configurations
@@ -22,7 +22,7 @@ public class Configurations
     public static class ConfigEvents
     {
         @SubscribeEvent
-        public static void modConfig(ModConfig.ModConfigEvent event)
+        public static void modConfig(ModConfigEvent event)
         {
             if(event.getConfig().getSpec() == SERVER_SPEC)
             {

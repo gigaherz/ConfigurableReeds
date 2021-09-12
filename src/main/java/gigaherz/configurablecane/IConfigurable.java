@@ -1,9 +1,9 @@
 package gigaherz.configurablecane;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.CactusBlock;
-import net.minecraft.block.SugarCaneBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CactusBlock;
+import net.minecraft.world.level.block.SugarCaneBlock;
 
 import javax.annotation.Nullable;
 

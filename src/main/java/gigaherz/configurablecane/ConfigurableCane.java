@@ -1,24 +1,24 @@
 package gigaherz.configurablecane;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.CactusBlock;
-import net.minecraft.block.SugarCaneBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CactusBlock;
+import net.minecraft.world.level.block.SugarCaneBlock;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderTypeLookup;
-import net.minecraft.item.Item;
-import net.minecraft.world.biome.BiomeColors;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.world.item.Item;
+import net.minecraft.client.renderer.BiomeColors;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fmllegacy.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -31,11 +31,11 @@ public class ConfigurableCane
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
     public static final RegistryObject<Block> SUGAR_CANE_TOP = BLOCKS.register("sugar_cane_top",
-            () -> new SugarCaneBlock(Block.Properties.from(Blocks.SUGAR_CANE))
+            () -> new SugarCaneBlock(Block.Properties.copy(Blocks.SUGAR_CANE))
     );
 
     public static final RegistryObject<Block> CACTUS_TOP = BLOCKS.register("cactus_top",
-            () -> new CactusBlock(Block.Properties.from(Blocks.CACTUS))
+            () -> new CactusBlock(Block.Properties.copy(Blocks.CACTUS))
     );
 
     public ConfigurableCane()
@@ -63,8 +63,8 @@ public class ConfigurableCane
 
     public void clientSetup(FMLClientSetupEvent event)
     {
-        RenderTypeLookup.setRenderLayer(CACTUS_TOP.get(), RenderType.getCutout());
-        RenderTypeLookup.setRenderLayer(SUGAR_CANE_TOP.get(), RenderType.getCutout());
+        ItemBlockRenderTypes.setRenderLayer(CACTUS_TOP.get(), RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(SUGAR_CANE_TOP.get(), RenderType.cutout());
     }
 
     @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = ConfigurableCane.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -74,7 +74,7 @@ public class ConfigurableCane
         public static void blockColors(ColorHandlerEvent.Block event)
         {
             event.getBlockColors().register((state, world, pos, tintIndex) ->
-                            world != null && pos != null ? BiomeColors.getGrassColor(world, pos) : -1,
+                            world != null && pos != null ? BiomeColors.getAverageGrassColor(world, pos) : -1,
                     ConfigurableCane.SUGAR_CANE_TOP.get()
             );
         }
