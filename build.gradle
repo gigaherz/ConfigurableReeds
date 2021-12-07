@@ -24,7 +24,7 @@ repositories {
     }
 }
 
-version = "2.2.0"
+version = "2.3.0"
 group = "gigaherz.configurablecane" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "ConfigurableCane-UNKNOWN"
 
@@ -32,14 +32,14 @@ project.afterEvaluate {
     archivesBaseName = "ConfigurableCane-${project.MC_VERSION}"
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(16)
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 mixin {
     add sourceSets.main, "configurablecane.refmap.json"
 }
 
 minecraft {
-    mappings channel: 'official', version: '1.17.1'
+    mappings channel: 'official', version: '1.18'
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -81,8 +81,8 @@ minecraft {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.17.1-37.0.59'
-    annotationProcessor 'org.spongepowered:mixin:0.8.4:processor'
+    minecraft 'net.minecraftforge:forge:1.18-38.0.15'
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
 jar {
