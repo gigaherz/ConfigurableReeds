@@ -31,11 +31,11 @@ public class ConfigurableCane
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
     public static final RegistryObject<Block> SUGAR_CANE_TOP = BLOCKS.register("sugar_cane_top",
-            () -> new SugarCaneBlock(Block.Properties.copy(Blocks.SUGAR_CANE))
+            () -> new SugarCaneBlock(Block.Properties.copy(Blocks.SUGAR_CANE).lootFrom(() -> Blocks.SUGAR_CANE))
     );
 
     public static final RegistryObject<Block> CACTUS_TOP = BLOCKS.register("cactus_top",
-            () -> new CactusBlock(Block.Properties.copy(Blocks.CACTUS))
+            () -> new CactusBlock(Block.Properties.copy(Blocks.CACTUS).lootFrom(() -> Blocks.CACTUS))
     );
 
     public ConfigurableCane()
@@ -68,13 +68,13 @@ public class ConfigurableCane
     }
 
     @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = ConfigurableCane.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
-    static class ClientEvents
+    public static class ClientEvents
     {
         @SubscribeEvent
         public static void blockColors(ColorHandlerEvent.Block event)
         {
-            event.getBlockColors().register((state, world, pos, tintIndex) ->
-                            world != null && pos != null ? BiomeColors.getAverageGrassColor(world, pos) : -1,
+            event.getBlockColors().register((state, level, pos, tintIndex) ->
+                            level != null && pos != null ? BiomeColors.getAverageGrassColor(level, pos) : -1,
                     ConfigurableCane.SUGAR_CANE_TOP.get()
             );
         }
