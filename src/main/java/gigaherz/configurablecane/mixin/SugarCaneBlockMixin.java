@@ -2,6 +2,7 @@ package gigaherz.configurablecane.mixin;
 
 import gigaherz.configurablecane.ConfigurableThing;
 import gigaherz.configurablecane.IConfigurable;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.SugarCaneBlock;
@@ -72,9 +73,9 @@ public class SugarCaneBlockMixin extends Block implements IConfigurable
 
     // public void randomTick(BlockState state, ServerLevel world, BlockPos pos, Random rand) {
 
-    @Inject(method = "randomTick(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Ljava/util/Random;)V",
+    @Inject(method = "randomTick(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Lnet/minecraft/util/RandomSource;)V",
             at = @At("HEAD"), cancellable = true)
-    public void randomTickHook(BlockState state, ServerLevel world, BlockPos pos, Random rand, CallbackInfo ci)
+    public void randomTickHook(BlockState state, ServerLevel world, BlockPos pos, RandomSource rand, CallbackInfo ci)
     {
         if (getManager() != null && getManager().randomTick(state, world, pos, rand))
         {

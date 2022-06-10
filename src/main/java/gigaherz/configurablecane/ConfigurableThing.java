@@ -1,5 +1,6 @@
 package gigaherz.configurablecane;
 
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -72,7 +73,7 @@ public class ConfigurableThing
         return stackHeight;
     }
 
-    public boolean randomTick(BlockState state, Level world, BlockPos pos, Random rand)
+    public boolean randomTick(BlockState state, Level world, BlockPos pos, RandomSource rand)
     {
         if (!config.enabledValue)
         {
@@ -134,7 +135,7 @@ public class ConfigurableThing
         return true;
     }
 
-    private boolean kelpLikeGrowth(BlockState state, Level world, BlockPos pos, int maxAge, int maxHeight, Random rand)
+    private boolean kelpLikeGrowth(BlockState state, Level world, BlockPos pos, int maxAge, int maxHeight, RandomSource rand)
     {
         if (!world.isEmptyBlock(pos.above()))
             return true;

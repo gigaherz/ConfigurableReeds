@@ -24,7 +24,7 @@ repositories {
     }
 }
 
-version = "2.3.1"
+version = "2.4.0"
 group = "gigaherz.configurablecane" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "ConfigurableCane-UNKNOWN"
 
@@ -39,7 +39,7 @@ mixin {
 }
 
 minecraft {
-    mappings channel: 'official', version: '1.18.2'
+    mappings channel: 'official', version: '1.19'
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -81,7 +81,7 @@ minecraft {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.2-40.0.40'
+    minecraft 'net.minecraftforge:forge:1.19-41.0.16'
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
