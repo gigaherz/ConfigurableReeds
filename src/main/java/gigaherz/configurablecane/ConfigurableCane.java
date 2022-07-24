@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.world.item.Item;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ColorHandlerEvent;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -48,7 +48,6 @@ public class ConfigurableCane
         ITEMS.register(modEventBus);
 
         modEventBus.addListener(this::setup);
-        modEventBus.addListener(this::clientSetup);
 
         modLoadingContext.registerConfig(ModConfig.Type.SERVER, Configurations.SERVER_SPEC);
     }
@@ -61,19 +60,13 @@ public class ConfigurableCane
         IConfigurable.initializeSugarcane(SUGAR_CANE_TOP.get(), true);
     }
 
-    public void clientSetup(FMLClientSetupEvent event)
-    {
-        ItemBlockRenderTypes.setRenderLayer(CACTUS_TOP.get(), RenderType.cutout());
-        ItemBlockRenderTypes.setRenderLayer(SUGAR_CANE_TOP.get(), RenderType.cutout());
-    }
-
     @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = ConfigurableCane.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class ClientEvents
     {
         @SubscribeEvent
-        public static void blockColors(ColorHandlerEvent.Block event)
+        public static void blockColors(RegisterColorHandlersEvent.Block event)
         {
-            event.getBlockColors().register((state, level, pos, tintIndex) ->
+            event.register((state, level, pos, tintIndex) ->
                             level != null && pos != null ? BiomeColors.getAverageGrassColor(level, pos) : -1,
                     ConfigurableCane.SUGAR_CANE_TOP.get()
             );

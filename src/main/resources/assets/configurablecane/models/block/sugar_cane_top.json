@@ -1,0 +1,4 @@
+{
+  "parent": "minecraft:block/sugar_cane",
+  "render_type": "cutout"
+}
