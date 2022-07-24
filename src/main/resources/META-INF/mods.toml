@@ -1,6 +1,7 @@
 modLoader="javafml"
 loaderVersion="[38,)"
 license="BSD (3 clause)"
+issueTrackerURL="https://github.com/gigaherz/ConfigurableReeds/issues"
 
 [[mods]]
    modId="configurablecane"
@@ -9,11 +10,9 @@ license="BSD (3 clause)"
    description='''
 Lets you tweak the growth of sugarcane
 '''
-   credits="Thanks for this example mod goes to Java"
    authors="gigaherz"
    #updateJSONURL="http://myurl.me/"
    displayURL="https://github.com/gigaherz/ConfigurableReeds"
-   issueTrackerURL="https://github.com/gigaherz/ConfigurableReeds/issues"
 
 [[dependencies.configurablecane]]
    modId="forge"
