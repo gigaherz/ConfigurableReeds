@@ -55,11 +55,10 @@ public class CactusBlockMixin extends Block implements IConfigurable
         return super.getStateForPlacement(ctx);
     }
 
-    //   public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
-
     @Inject(method = "canSurvive(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;)Z",
-            at = @At("HEAD"), cancellable = true)
-    public void canSurviveHook(BlockState state, LevelReader world, BlockPos pos, CallbackInfoReturnable<Boolean> ci)
+            at = @At(value="INVOKE", ordinal = 1, target="Lnet/minecraft/world/level/LevelReader;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;"),
+            cancellable = true)
+    private void configurableCane$allowSurviveOnTop(BlockState state, LevelReader world, BlockPos pos, CallbackInfoReturnable<Boolean> ci)
     {
         if (manager != null && manager.isValidPosition(world, pos))
         {
@@ -67,11 +66,9 @@ public class CactusBlockMixin extends Block implements IConfigurable
         }
     }
 
-    // public void randomTick(BlockState state, ServerLevel world, BlockPos pos, Random rand) {
-
     @Inject(method = "randomTick(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Ljava/util/Random;)V",
             at = @At("HEAD"), cancellable = true)
-    public void randomTickHook(BlockState state, ServerLevel world, BlockPos pos, Random rand, CallbackInfo ci)
+    public void configurableCane$customGrowthLogic(BlockState state, ServerLevel world, BlockPos pos, Random rand, CallbackInfo ci)
     {
         if (manager != null && manager.randomTick(state, world, pos, rand))
         {
