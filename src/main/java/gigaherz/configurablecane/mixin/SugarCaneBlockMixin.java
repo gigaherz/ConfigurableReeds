@@ -63,7 +63,7 @@ public class SugarCaneBlockMixin extends Block implements IConfigurable
 
     @Inject(method = "canSurvive(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;)Z",
             at = @At("HEAD"), cancellable = true)
-    public void canSurviveHook(BlockState state, LevelReader world, BlockPos pos, CallbackInfoReturnable<Boolean> ci)
+    public void configurableCane$allowSurviveOnTop(BlockState state, LevelReader world, BlockPos pos, CallbackInfoReturnable<Boolean> ci)
     {
         if (getManager() != null && getManager().isValidPosition(world, pos))
         {
@@ -75,7 +75,7 @@ public class SugarCaneBlockMixin extends Block implements IConfigurable
 
     @Inject(method = "randomTick(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Lnet/minecraft/util/RandomSource;)V",
             at = @At("HEAD"), cancellable = true)
-    public void randomTickHook(BlockState state, ServerLevel world, BlockPos pos, RandomSource rand, CallbackInfo ci)
+    public void configurableCane$customGrowthLogic(BlockState state, ServerLevel world, BlockPos pos, RandomSource rand, CallbackInfo ci)
     {
         if (getManager() != null && getManager().randomTick(state, world, pos, rand))
         {
