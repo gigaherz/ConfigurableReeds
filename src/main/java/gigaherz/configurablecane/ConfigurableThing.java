@@ -8,6 +8,7 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.common.CommonHooks;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -18,12 +19,12 @@ public class ConfigurableThing
     private final IntegerProperty ageProperty;
     private final Configurations.ServerConfig.ThingConfig config;
     private final boolean isTop;
-    private final Supplier<Block> ownerBlock;
-    private final Supplier<Block> mainBlock;
-    private final Supplier<Block> topBlock;
+    private final Supplier<? extends Block> ownerBlock;
+    private final Supplier<? extends Block> mainBlock;
+    private final Supplier<? extends Block> topBlock;
     private final boolean stupidEventFiresAbove;
 
-    public ConfigurableThing(Configurations.ServerConfig.ThingConfig config, IntegerProperty ageProperty, boolean isTop, Supplier<Block> ownerBlock, Supplier<Block> mainBlock, Supplier<Block> topBlock, boolean stupidEventFiresAbove)
+    public ConfigurableThing(Configurations.ServerConfig.ThingConfig config, IntegerProperty ageProperty, boolean isTop, Supplier<? extends Block> ownerBlock, Supplier<? extends Block> mainBlock, Supplier<? extends Block> topBlock, boolean stupidEventFiresAbove)
     {
         this.config = config;
         this.isTop = isTop;
@@ -117,7 +118,7 @@ public class ConfigurableThing
             return true;
 
         BlockPos eventPos = stupidEventFiresAbove ? pos.above() : pos;
-        if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(world, eventPos, state, true))
+        if (CommonHooks.onCropsGrowPre(world, eventPos, state, true))
         {
             int age = state.getValue(ageProperty);
             if (age >= maxAge)
@@ -129,7 +130,7 @@ public class ConfigurableThing
             {
                 world.setBlock(pos, state.setValue(ageProperty, age + 1), 4);
             }
-            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(world, pos, state);
+            CommonHooks.onCropsGrowPost(world, pos, state);
         }
 
         return true;
@@ -149,7 +150,7 @@ public class ConfigurableThing
             if (age < maxAge && rand.nextDouble() < config.kelpLikeGrowthChanceValue)
             {
                 BlockPos eventPos = stupidEventFiresAbove ? pos.above() : pos;
-                if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(world, eventPos, state, true))
+                if (CommonHooks.onCropsGrowPre(world, eventPos, state, true))
                 {
                     int ageGrowthInt = (int) config.kelpLikeAgeChanceValue;
                     double random = config.kelpLikeAgeChanceValue - ageGrowthInt;
@@ -157,7 +158,7 @@ public class ConfigurableThing
                         ageGrowthInt++;
                     world.setBlockAndUpdate(pos.above(), state.setValue(ageProperty, age + ageGrowthInt));
                     world.setBlock(pos, mainBlock.get().defaultBlockState().setValue(ageProperty, 15), 2);
-                    net.minecraftforge.common.ForgeHooks.onCropsGrowPost(world, pos, state);
+                    CommonHooks.onCropsGrowPost(world, pos, state);
                 }
             }
         }

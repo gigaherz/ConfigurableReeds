@@ -1,48 +1,42 @@
 package gigaherz.configurablecane;
 
-import net.minecraft.world.level.block.*;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.world.item.Item;
 import net.minecraft.client.renderer.BiomeColors;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RegisterColorHandlersEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.RegistryObject;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CactusBlock;
+import net.minecraft.world.level.block.SugarCaneBlock;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
+import net.neoforged.neoforge.registries.DeferredBlock;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 @Mod(ConfigurableCane.MODID)
 public class ConfigurableCane
 {
     public static final String MODID = "configurablecane";
 
-    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
-    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
+    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
 
-    public static final RegistryObject<Block> SUGAR_CANE_TOP = BLOCKS.register("sugar_cane_top",
-            () -> new SugarCaneBlock(Block.Properties.copy(Blocks.SUGAR_CANE).lootFrom(() -> Blocks.SUGAR_CANE))
+    public static final DeferredBlock<SugarCaneBlock> SUGAR_CANE_TOP = BLOCKS.register("sugar_cane_top",
+            () -> new SugarCaneBlock(Block.Properties.ofFullCopy(Blocks.SUGAR_CANE).lootFrom(() -> Blocks.SUGAR_CANE))
     );
 
-    public static final RegistryObject<Block> CACTUS_TOP = BLOCKS.register("cactus_top",
-            () -> new CactusBlock(Block.Properties.copy(Blocks.CACTUS).lootFrom(() -> Blocks.CACTUS))
+    public static final DeferredBlock<CactusBlock> CACTUS_TOP = BLOCKS.register("cactus_top",
+            () -> new CactusBlock(Block.Properties.ofFullCopy(Blocks.CACTUS).lootFrom(() -> Blocks.CACTUS))
     );
 
-    public ConfigurableCane()
+    public ConfigurableCane(IEventBus modEventBus)
     {
 
         ModLoadingContext modLoadingContext = ModLoadingContext.get();
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         BLOCKS.register(modEventBus);
-        ITEMS.register(modEventBus);
 
         modEventBus.addListener(this::setup);
 

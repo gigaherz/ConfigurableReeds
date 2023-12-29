@@ -1,19 +1,19 @@
 package gigaherz.configurablecane;
 
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.config.ModConfigEvent;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class Configurations
 {
     public static final ServerConfig SERVER;
-    public static final ForgeConfigSpec SERVER_SPEC;
+    public static final ModConfigSpec SERVER_SPEC;
 
     static
     {
-        final Pair<ServerConfig, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(ServerConfig::new);
+        final Pair<ServerConfig, ModConfigSpec> specPair = new ModConfigSpec.Builder().configure(ServerConfig::new);
         SERVER_SPEC = specPair.getRight();
         SERVER = specPair.getLeft();
     }
@@ -36,12 +36,12 @@ public class Configurations
     {
         public static class ThingConfig
         {
-            private final ForgeConfigSpec.BooleanValue enabled;
-            private final ForgeConfigSpec.IntValue maxHeight;
-            private final ForgeConfigSpec.IntValue maxAge;
-            private final ForgeConfigSpec.BooleanValue kelpLikeGrowth;
-            private final ForgeConfigSpec.DoubleValue kelpLikeGrowthChance;
-            private final ForgeConfigSpec.DoubleValue kelpLikeAgeChance;
+            private final ModConfigSpec.BooleanValue enabled;
+            private final ModConfigSpec.IntValue maxHeight;
+            private final ModConfigSpec.IntValue maxAge;
+            private final ModConfigSpec.BooleanValue kelpLikeGrowth;
+            private final ModConfigSpec.DoubleValue kelpLikeGrowthChance;
+            private final ModConfigSpec.DoubleValue kelpLikeAgeChance;
 
             public boolean enabledValue;
             public int maxHeightValue;
@@ -60,7 +60,7 @@ public class Configurations
                 kelpLikeAgeChanceValue = kelpLikeAgeChance.get();
             }
 
-            ThingConfig(ForgeConfigSpec.Builder builder, String category, String display)
+            ThingConfig(ModConfigSpec.Builder builder, String category, String display)
             {
 
                 builder.push(category);
@@ -95,7 +95,7 @@ public class Configurations
         public final ThingConfig sugarCane;
         public final ThingConfig cactus;
 
-        ServerConfig(ForgeConfigSpec.Builder builder)
+        ServerConfig(ModConfigSpec.Builder builder)
         {
             sugarCane = new ThingConfig(builder, "sugar_cane", "sugar cane");
             cactus = new ThingConfig(builder, "cactus", "cactus");
