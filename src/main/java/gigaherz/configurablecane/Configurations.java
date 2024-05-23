@@ -1,6 +1,7 @@
 package gigaherz.configurablecane;
 
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
@@ -18,7 +19,7 @@ public class Configurations
         SERVER = specPair.getLeft();
     }
 
-    @Mod.EventBusSubscriber(modid=ConfigurableCane.MODID, bus= Mod.EventBusSubscriber.Bus.MOD)
+    @EventBusSubscriber(modid=ConfigurableCane.MODID, bus= EventBusSubscriber.Bus.MOD)
     public static class ConfigEvents
     {
         @SubscribeEvent

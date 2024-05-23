@@ -8,7 +8,9 @@ import net.minecraft.world.level.block.SugarCaneBlock;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -31,16 +33,13 @@ public class ConfigurableCane
             () -> new CactusBlock(Block.Properties.ofFullCopy(Blocks.CACTUS).lootFrom(() -> Blocks.CACTUS))
     );
 
-    public ConfigurableCane(IEventBus modEventBus)
+    public ConfigurableCane(ModContainer container, IEventBus modEventBus)
     {
-
-        ModLoadingContext modLoadingContext = ModLoadingContext.get();
-
         BLOCKS.register(modEventBus);
 
         modEventBus.addListener(this::setup);
 
-        modLoadingContext.registerConfig(ModConfig.Type.SERVER, Configurations.SERVER_SPEC);
+        container.registerConfig(ModConfig.Type.SERVER, Configurations.SERVER_SPEC);
     }
 
     public void setup(FMLCommonSetupEvent event)
@@ -51,7 +50,7 @@ public class ConfigurableCane
         IConfigurable.initializeSugarcane(SUGAR_CANE_TOP.get(), true);
     }
 
-    @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = ConfigurableCane.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+    @EventBusSubscriber(value = Dist.CLIENT, modid = ConfigurableCane.MODID, bus = EventBusSubscriber.Bus.MOD)
     public static class ClientEvents
     {
         @SubscribeEvent
