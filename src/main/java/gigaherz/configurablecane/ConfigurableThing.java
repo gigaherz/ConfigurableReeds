@@ -118,7 +118,7 @@ public class ConfigurableThing
             return true;
 
         BlockPos eventPos = stupidEventFiresAbove ? pos.above() : pos;
-        if (CommonHooks.onCropsGrowPre(world, eventPos, state, true))
+        if (CommonHooks.canCropGrow(world, eventPos, state, true))
         {
             int age = state.getValue(ageProperty);
             if (age >= maxAge)
@@ -130,7 +130,7 @@ public class ConfigurableThing
             {
                 world.setBlock(pos, state.setValue(ageProperty, age + 1), 4);
             }
-            CommonHooks.onCropsGrowPost(world, pos, state);
+            CommonHooks.fireCropGrowPost(world, pos, state);
         }
 
         return true;
@@ -150,7 +150,7 @@ public class ConfigurableThing
             if (age < maxAge && rand.nextDouble() < config.kelpLikeGrowthChanceValue)
             {
                 BlockPos eventPos = stupidEventFiresAbove ? pos.above() : pos;
-                if (CommonHooks.onCropsGrowPre(world, eventPos, state, true))
+                if (CommonHooks.canCropGrow(world, eventPos, state, true))
                 {
                     int ageGrowthInt = (int) config.kelpLikeAgeChanceValue;
                     double random = config.kelpLikeAgeChanceValue - ageGrowthInt;
@@ -158,7 +158,7 @@ public class ConfigurableThing
                         ageGrowthInt++;
                     world.setBlockAndUpdate(pos.above(), state.setValue(ageProperty, age + ageGrowthInt));
                     world.setBlock(pos, mainBlock.get().defaultBlockState().setValue(ageProperty, 15), 2);
-                    CommonHooks.onCropsGrowPost(world, pos, state);
+                    CommonHooks.fireCropGrowPost(world, pos, state);
                 }
             }
         }
