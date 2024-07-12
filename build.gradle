@@ -1,21 +1,14 @@
 plugins {
-    id 'java-library'
-    id 'eclipse'
-    id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.gradle.userdev' version '7.0.142'
+    id 'net.neoforged.moddev' version '1.0.3'
 }
 
-version = "2.5.4"
+version = "2.5.4.1"
 group = "gigaherz.configurablecane"
 
-Provider<String> minecraftVersion(Transformer<String, String> mapper) {
-    return project.provider((() -> project.userDevRuntime.definitions.values().first().specification.minecraftVersion))
-            .map(mapper)
-}
-
+var minecraftVersion = project.neoForge.version.map { "1." + (it =~ /^(\d+(?:\.[1-9]\d*|))\./)[0][1] }
 base {
-    archivesName = minecraftVersion { "ConfigurableCane-${it}" }
+    archivesName = minecraftVersion.map { "ConfigurableCane-${it}" }
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
@@ -24,43 +17,35 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
 
-repositories {
-    mavenLocal()
-    maven {
-        url 'https://maven.tterrag.com/'
-    }
-    maven {
-        url 'https://www.dogforce-games.com/maven/'
-    }
-}
+neoForge {
+    version = "21.0.86-beta"
 
-runs {
-    // applies to all the run configs below
-    configureEach {
-        systemProperty 'forge.logging.markers', '' // 'REGISTRIES'
-        systemProperty 'forge.logging.console.level', 'debug'
-
-        workingDirectory project.file('run')
-
-        modSource project.sourceSets.main
+    mods {
+        thismod {
+            modSourceSets = [sourceSets.main]
+        }
     }
 
-    client {
+    runs {
+        // applies to all the run configs below
+        configureEach {
+            gameDirectory = project.file('run')
+            logLevel = org.slf4j.event.Level.DEBUG
+        }
+
+        client {
+            client()
+        }
+
+        server {
+            server()
+        }
     }
 
-    server {
-    }
-}
-
-subsystems {
     parchment {
-        minecraftVersion="1.20.6"
-        mappingsVersion="2024.05.01"
+        minecraftVersion = "1.21"
+        mappingsVersion = "2024.07.07"
     }
-}
-
-dependencies {
-    implementation 'net.neoforged:neoforge:21.0.8-beta'
 }
 
 jar {

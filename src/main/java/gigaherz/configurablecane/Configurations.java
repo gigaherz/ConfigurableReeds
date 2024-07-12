@@ -2,7 +2,6 @@ package gigaherz.configurablecane;
 
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
@@ -23,7 +22,18 @@ public class Configurations
     public static class ConfigEvents
     {
         @SubscribeEvent
-        public static void modConfig(ModConfigEvent event)
+        public static void modConfigLoad(ModConfigEvent.Loading event)
+        {
+            reloadConfig(event);
+        }
+
+        @SubscribeEvent
+        public static void modConfigReload(ModConfigEvent.Reloading event)
+        {
+            reloadConfig(event);
+        }
+
+        private static void reloadConfig(ModConfigEvent event)
         {
             if(event.getConfig().getSpec() == SERVER_SPEC)
             {
