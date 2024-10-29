@@ -25,12 +25,14 @@ public class ConfigurableCane
 
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
 
-    public static final DeferredBlock<SugarCaneBlock> SUGAR_CANE_TOP = BLOCKS.register("sugar_cane_top",
-            () -> new SugarCaneBlock(Block.Properties.ofFullCopy(Blocks.SUGAR_CANE).lootFrom(() -> Blocks.SUGAR_CANE))
+    public static final DeferredBlock<SugarCaneBlock> SUGAR_CANE_TOP = BLOCKS.registerBlock("sugar_cane_top",
+            props -> new SugarCaneBlock(props.overrideLootTable(Blocks.SUGAR_CANE.getLootTable())),
+            Block.Properties.ofFullCopy(Blocks.SUGAR_CANE)
     );
 
-    public static final DeferredBlock<CactusBlock> CACTUS_TOP = BLOCKS.register("cactus_top",
-            () -> new CactusBlock(Block.Properties.ofFullCopy(Blocks.CACTUS).lootFrom(() -> Blocks.CACTUS))
+    public static final DeferredBlock<CactusBlock> CACTUS_TOP = BLOCKS.registerBlock("cactus_top",
+            props -> new CactusBlock(props.overrideLootTable(Blocks.CACTUS.getLootTable())),
+            Block.Properties.ofFullCopy(Blocks.CACTUS)
     );
 
     public ConfigurableCane(ModContainer container, IEventBus modEventBus)

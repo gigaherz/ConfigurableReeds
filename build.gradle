@@ -1,30 +1,22 @@
 plugins {
+    id 'java-library'
+    id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.moddev' version '1.0.3'
+    id 'net.neoforged.moddev' version '2.0.42-beta'
 }
 
-version = "2.5.4.1"
+version = "2.6.0"
 group = "gigaherz.configurablecane"
 
-var minecraftVersion = project.neoForge.version.map { "1." + (it =~ /^(\d+(?:\.[1-9]\d*|))\./)[0][1] }
+var minecraftVersionResolver = project.neoForge.version.map { "1." + (it =~ /^(\d+(?:\.[1-9]\d*|))\./)[0][1] }
 base {
-    archivesName = minecraftVersion.map { "ConfigurableCane-${it}" }
+    archivesName = minecraftVersionResolver.map { "ConfigurableCane-${it}" }
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
-}
-
 neoForge {
-    version = "21.0.86-beta"
-
-    mods {
-        thismod {
-            modSourceSets = [sourceSets.main]
-        }
-    }
+    version = "21.3.0-beta"
 
     runs {
         // applies to all the run configs below
@@ -42,9 +34,15 @@ neoForge {
         }
     }
 
+    mods {
+        thismod {
+            sourceSet(sourceSets.main)
+        }
+    }
+
     parchment {
         minecraftVersion = "1.21"
-        mappingsVersion = "2024.07.07"
+        mappingsVersion = "2024.07.28"
     }
 }
 
@@ -61,8 +59,7 @@ jar {
                 "Implementation-Title": project.name,
                 "Implementation-Version": project.version,
                 "Implementation-Vendor" :"gigaherz",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                "MixinConfigs": "configurablecane.mixins.json"
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
 }
