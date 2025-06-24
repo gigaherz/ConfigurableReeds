@@ -17,25 +17,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import javax.annotation.Nullable;
-import java.util.Optional;
-import java.util.Random;
-
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 @Mixin(SugarCaneBlock.class)
-public class SugarCaneBlockMixin extends Block implements IConfigurable
+public class SugarCaneBlockMixin extends Block implements IConfigurable<SugarCaneBlock>
 {
     private ConfigurableThing manager;
 
     @Nullable
     @Override
-    public final ConfigurableThing getManager()
+    public final ConfigurableThing configurableCane$getManager()
     {
         return manager;
     }
 
     @Override
-    public final void setManager(ConfigurableThing manager)
+    public final void configurableCane$setManager(ConfigurableThing manager)
     {
         this.manager = manager;
     }
@@ -45,12 +41,13 @@ public class SugarCaneBlockMixin extends Block implements IConfigurable
         super(properties);
     }
 
+    @Nullable
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx)
     {
-        if (getManager() != null)
+        if (configurableCane$getManager() != null)
         {
-            BlockState state = getManager().getStateForPlacement(ctx);
+            BlockState state = configurableCane$getManager().getStateForPlacement(ctx);
             if (state != null)
             {
                 return state;
@@ -65,7 +62,7 @@ public class SugarCaneBlockMixin extends Block implements IConfigurable
             at = @At("HEAD"), cancellable = true)
     public void configurableCane$allowSurviveOnTop(BlockState state, LevelReader world, BlockPos pos, CallbackInfoReturnable<Boolean> ci)
     {
-        if (getManager() != null && getManager().isValidPosition(world, pos))
+        if (configurableCane$getManager() != null && configurableCane$getManager().isValidPosition(world, pos))
         {
             ci.setReturnValue(true);
         }
@@ -77,7 +74,7 @@ public class SugarCaneBlockMixin extends Block implements IConfigurable
             at = @At("HEAD"), cancellable = true)
     public void configurableCane$customGrowthLogic(BlockState state, ServerLevel world, BlockPos pos, RandomSource rand, CallbackInfo ci)
     {
-        if (getManager() != null && getManager().randomTick(state, world, pos, rand))
+        if (configurableCane$getManager() != null && configurableCane$getManager().randomTick(state, world, pos, rand))
         {
             ci.cancel();
         }

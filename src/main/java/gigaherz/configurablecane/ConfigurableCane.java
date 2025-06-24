@@ -52,7 +52,7 @@ public class ConfigurableCane
         IConfigurable.initializeSugarcane(SUGAR_CANE_TOP.get(), true);
     }
 
-    @EventBusSubscriber(value = Dist.CLIENT, modid = ConfigurableCane.MODID, bus = EventBusSubscriber.Bus.MOD)
+    @EventBusSubscriber(value = Dist.CLIENT, modid = ConfigurableCane.MODID)
     public static class ClientEvents
     {
         @SubscribeEvent

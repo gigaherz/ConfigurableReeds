@@ -18,7 +18,7 @@ public class Configurations
         SERVER = specPair.getLeft();
     }
 
-    @EventBusSubscriber(modid=ConfigurableCane.MODID, bus= EventBusSubscriber.Bus.MOD)
+    @EventBusSubscriber(modid=ConfigurableCane.MODID)
     public static class ConfigEvents
     {
         @SubscribeEvent
@@ -99,17 +99,72 @@ public class Configurations
                         .comment("If KelpLikeGrowth is TRUE, this value indicates the chance the top " + display + " age will increase when growing.")
                         .translation("text.configurablecane.config." + category + ".kelp_like_growth_chance")
                         .defineInRange("KelpLikeAgeChance", 0.75, 0.0, Double.MAX_VALUE);
+                additional(builder);
                 builder.pop();
+            }
+
+            protected void additional(ModConfigSpec.Builder builder)
+            {
+
+            }
+        }
+
+        public static class CactusThingConfig extends ThingConfig
+        {
+            private ModConfigSpec.DoubleValue flowerChancePerLevelBonus;
+            private ModConfigSpec.IntValue flowerChanceHeight;
+            private ModConfigSpec.DoubleValue flowerChanceExtra;
+            private ModConfigSpec.DoubleValue flowerChanceBase;
+
+            public double flowerChancePerLevelBonusValue;
+            public int flowerChanceHeightValue;
+            public double flowerChanceExtraValue;
+            public double flowerChanceBaseValue;
+
+            CactusThingConfig(ModConfigSpec.Builder builder, String category, String display)
+            {
+                super(builder, category, display);
+            }
+
+            @Override
+            protected void additional(ModConfigSpec.Builder builder)
+            {
+                flowerChancePerLevelBonus = builder
+                        .comment("When non-zero, the specified value is added to the chance of flowers to grow on the cactus.")
+                        .translation("text.configurablecane.config.cactus.flower_chance_per_level_bonus")
+                        .defineInRange("flowerChancePerLevelBonus", 0, 0, Double.MAX_VALUE);
+                flowerChanceHeight = builder
+                        .comment("The height at which cactus is more likely to generate flowers. The vanilla default is 3.")
+                        .translation("text.configurablecane.config.cactus.flower_chance_per_level_bonus")
+                        .defineInRange("flowerChanceHeightValue", 3, 0, 255);
+                flowerChanceExtra = builder
+                        .comment("The chance for a flower to grow in blocks at or above the height. The vanilla default is 0.25.")
+                        .translation("text.configurablecane.config.cactus.flower_chance_per_level_bonus")
+                        .defineInRange("flowerChanceExtraValue", 0.25, 0, Double.MAX_VALUE);
+                flowerChanceBase = builder
+                        .comment("The chance for a flower to grow in blocks below the height. The vanilla default is 0.1.")
+                        .translation("text.configurablecane.config.cactus.flower_chance_per_level_bonus")
+                        .defineInRange("flowerChanceBaseValue", 0.1, 0, Double.MAX_VALUE);
+            }
+
+            @Override
+            public void updateCachedValues()
+            {
+                super.updateCachedValues();
+                flowerChancePerLevelBonusValue = flowerChancePerLevelBonus.getAsDouble();
+                flowerChanceHeightValue = flowerChanceHeight.getAsInt();
+                flowerChanceExtraValue = flowerChanceExtra.getAsDouble();
+                flowerChanceBaseValue = flowerChanceBase.getAsDouble();
             }
         }
 
         public final ThingConfig sugarCane;
-        public final ThingConfig cactus;
+        public final CactusThingConfig cactus;
 
         ServerConfig(ModConfigSpec.Builder builder)
         {
             sugarCane = new ThingConfig(builder, "sugar_cane", "sugar cane");
-            cactus = new ThingConfig(builder, "cactus", "cactus");
+            cactus = new CactusThingConfig(builder, "cactus", "cactus");
         }
     }
 

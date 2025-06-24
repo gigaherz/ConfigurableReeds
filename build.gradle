@@ -2,22 +2,17 @@ plugins {
     id 'java-library'
     id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.moddev' version '2.0.63-beta'
+    id 'net.neoforged.moddev' version '2.0.95'
 }
 
+neoForge.version = "21.6.11-beta"
 version = "2.6.0"
 group = "gigaherz.configurablecane"
-
-var minecraftVersionResolver = project.neoForge.version.map { "1." + (it =~ /^(\d+(?:\.[1-9]\d*|))\./)[0][1] }
-base {
-    archivesName = minecraftVersionResolver.map { "ConfigurableCane-${it}" }
-}
+base.archivesName = "ConfigurableCane-${neoForge.minecraftVersion}"
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 neoForge {
-    version = "21.4.78-beta"
-
     runs {
         // applies to all the run configs below
         configureEach {
@@ -34,22 +29,21 @@ neoForge {
         }
     }
 
+    parchment {
+        minecraftVersion="1.21.5"
+        mappingsVersion="2025.06.01"
+    }
+
     mods {
         thismod {
             sourceSet(sourceSets.main)
         }
     }
 
-    parchment {
-        minecraftVersion = "1.21.4"
-        mappingsVersion = "2024.12.29"
-    }
 }
 
 jar {
-    from('/') {
-        include 'LICENSE.txt'
-    }
+    from(files('LICENSE.txt'))
 
     manifest {
         attributes([
@@ -61,5 +55,17 @@ jar {
                 "Implementation-Vendor" :"gigaherz",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+
+// IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
     }
 }

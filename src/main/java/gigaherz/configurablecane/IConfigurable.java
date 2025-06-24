@@ -1,5 +1,8 @@
 package gigaherz.configurablecane;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CactusBlock;
@@ -7,34 +10,41 @@ import net.minecraft.world.level.block.SugarCaneBlock;
 
 import javax.annotation.Nullable;
 
-public interface IConfigurable
+public interface IConfigurable<T extends Block>
 {
     @Nullable
-    ConfigurableThing getManager();
+    ConfigurableThing configurableCane$getManager();
 
-    void setManager(ConfigurableThing manager);
+    void configurableCane$setManager(ConfigurableThing manager);
 
-    static void initializeCactus(Block block, boolean isTop)
+    default boolean configurableCane$doSpecialGrowth(ServerLevel level, BlockPos pos, int age, int height, RandomSource rand)
     {
-        ((IConfigurable) block).setManager(new ConfigurableThing(
+        return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    static <B extends Block> void initializeCactus(Block block, boolean isTop)
+    {
+        ((IConfigurable<B>) block).configurableCane$setManager(new ConfigurableThing(
                 Configurations.SERVER.cactus,
                 CactusBlock.AGE,
                 isTop,
-                () -> block,
-                () -> Blocks.CACTUS,
-                ConfigurableCane.CACTUS_TOP,
-                true));
+                block,
+                Blocks.CACTUS,
+                ConfigurableCane.CACTUS_TOP.get(),
+                true, ((IConfigurable<B>) block)));
     }
 
-    static void initializeSugarcane(Block block, boolean isTop)
+    @SuppressWarnings("unchecked")
+    static <B extends Block> void initializeSugarcane(Block block, boolean isTop)
     {
-        ((IConfigurable) block).setManager(new ConfigurableThing(
+        ((IConfigurable<B>) block).configurableCane$setManager(new ConfigurableThing(
                 Configurations.SERVER.sugarCane,
                 SugarCaneBlock.AGE,
                 isTop,
-                () -> block,
-                () -> Blocks.SUGAR_CANE,
-                ConfigurableCane.SUGAR_CANE_TOP,
-                false));
+                block,
+                Blocks.SUGAR_CANE,
+                ConfigurableCane.SUGAR_CANE_TOP.get(),
+                false, ((IConfigurable<B>) block)));
     }
 }

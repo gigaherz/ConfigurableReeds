@@ -1,6 +1,7 @@
 package gigaherz.configurablecane.mixin;
 
 import gigaherz.configurablecane.ConfigurableThing;
+import gigaherz.configurablecane.Configurations;
 import gigaherz.configurablecane.IConfigurable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -8,31 +9,32 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CactusBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import javax.annotation.Nullable;
-import java.util.Random;
 
 @Mixin(CactusBlock.class)
-public class CactusBlockMixin extends Block implements IConfigurable
+public abstract class CactusBlockMixin extends Block implements IConfigurable<CactusBlockMixin>
 {
     private ConfigurableThing manager;
 
     @Nullable
     @Override
-    public final ConfigurableThing getManager()
+    public final ConfigurableThing configurableCane$getManager()
     {
         return manager;
     }
 
     @Override
-    public final void setManager(ConfigurableThing manager)
+    public final void configurableCane$setManager(ConfigurableThing manager)
     {
         this.manager = manager;
     }
@@ -42,6 +44,7 @@ public class CactusBlockMixin extends Block implements IConfigurable
         super(properties);
     }
 
+    @Nullable
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx)
     {
@@ -55,6 +58,28 @@ public class CactusBlockMixin extends Block implements IConfigurable
         }
         return super.getStateForPlacement(ctx);
     }
+
+    @Invoker(value="canSurvive")
+    protected abstract boolean configurableCane$canSurvive$accessor(BlockState state, LevelReader level, BlockPos pos);
+
+    @Override
+    public boolean configurableCane$doSpecialGrowth(ServerLevel level, BlockPos pos, int age, int height, RandomSource rand)
+    {
+        if (configurableCane$canSurvive$accessor(this.defaultBlockState(), level, pos.above()))
+        {
+            double chance = (height >= Configurations.SERVER.cactus.flowerChanceHeightValue
+                            ? Configurations.SERVER.cactus.flowerChanceExtraValue
+                            : Configurations.SERVER.cactus.flowerChanceBaseValue
+                    ) + height * Configurations.SERVER.cactus.flowerChancePerLevelBonusValue;
+            if (rand.nextDouble() <= chance)
+            {
+                level.setBlockAndUpdate(pos.above(), Blocks.CACTUS_FLOWER.defaultBlockState());
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     @Inject(method = "canSurvive(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;)Z",
             at = @At(value="INVOKE", ordinal = 1, target="Lnet/minecraft/world/level/LevelReader;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;"),
