@@ -2,11 +2,11 @@ plugins {
     id 'java-library'
     id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.moddev' version '2.0.95'
+    id 'net.neoforged.moddev' version '2.0.99'
 }
 
-neoForge.version = "21.6.11-beta"
-version = "2.6.0"
+neoForge.version = "21.7.17-beta"
+version = "2.7.0"
 group = "gigaherz.configurablecane"
 base.archivesName = "ConfigurableCane-${neoForge.minecraftVersion}"
 
@@ -30,8 +30,8 @@ neoForge {
     }
 
     parchment {
-        minecraftVersion="1.21.5"
-        mappingsVersion="2025.06.01"
+        minecraftVersion="1.21.6"
+        mappingsVersion="BLEEDING-SNAPSHOT"
     }
 
     mods {

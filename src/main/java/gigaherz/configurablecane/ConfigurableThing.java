@@ -71,10 +71,10 @@ public class ConfigurableThing
         }
     }
 
-    private int getStackHeight(Level world, BlockPos pos)
+    private int getStackHeight(Level world, BlockPos pos, int limit)
     {
         int stackHeight = 1;
-        while (world.getBlockState(pos.below(stackHeight)).getBlock() == mainBlock)
+        while (stackHeight < limit && world.getBlockState(pos.below(stackHeight)).getBlock() == mainBlock)
         {
             ++stackHeight;
         }
@@ -128,13 +128,14 @@ public class ConfigurableThing
         if (CommonHooks.canCropGrow(world, eventPos, state, true))
         {
             int age = state.getValue(ageProperty);
-            if (age != 8 || owner.configurableCane$doSpecialGrowth(world, pos, age, getStackHeight(world, pos), rand))
+            int stackHeight = getStackHeight(world, pos, maxHeight);
+            if (age != 8 || owner.configurableCane$doSpecialGrowth(world, pos, age, stackHeight, rand))
             {
-                if (getStackHeight(world, pos) >= maxHeight)
-                    return;
-
                 if (age >= maxAge)
                 {
+                    if (stackHeight >= maxHeight)
+                        return;
+
                     world.setBlockAndUpdate(pos.above(), ownerBlock.defaultBlockState());
                     world.setBlock(pos, state.setValue(ageProperty, 0), 4);
                 }
@@ -162,9 +163,10 @@ public class ConfigurableThing
             int age = state.getValue(ageProperty);
             if (age < maxAge && rand.nextDouble() < config.kelpLikeGrowthChanceValue)
             {
-                if (owner.configurableCane$doSpecialGrowth(world, pos, age, getStackHeight(world, pos), rand))
+                int stackHeight = getStackHeight(world, pos, maxHeight);
+                if (owner.configurableCane$doSpecialGrowth(world, pos, age, stackHeight, rand))
                 {
-                    if (getStackHeight(world, pos) >= maxHeight)
+                    if (stackHeight >= maxHeight)
                         return;
 
                     int ageGrowthInt = (int) config.kelpLikeAgeChanceValue;
