@@ -49,7 +49,7 @@ public class ConfigurableThing
 
     private BlockState randomAge(Level world, BlockState state, int maxAge)
     {
-        return state.setValue(ageProperty, world.random.nextInt(maxAge));
+        return state.setValue(ageProperty, world.getRandom().nextInt(maxAge));
     }
 
     public boolean isValidPosition(LevelReader world, BlockPos pos)
