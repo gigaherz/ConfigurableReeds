@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CactusBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -24,19 +25,20 @@ import javax.annotation.Nullable;
 @Mixin(CactusBlock.class)
 public abstract class CactusBlockMixin extends Block implements IConfigurable<CactusBlockMixin>
 {
-    private ConfigurableThing manager;
+    @Unique
+    private ConfigurableThing configurablecane$thingmanager;
 
     @Nullable
     @Override
     public final ConfigurableThing configurableCane$getManager()
     {
-        return manager;
+        return configurablecane$thingmanager;
     }
 
     @Override
     public final void configurableCane$setManager(ConfigurableThing manager)
     {
-        this.manager = manager;
+        this.configurablecane$thingmanager = manager;
     }
 
     public CactusBlockMixin(Properties properties)
@@ -48,9 +50,9 @@ public abstract class CactusBlockMixin extends Block implements IConfigurable<Ca
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx)
     {
-        if (manager != null)
+        if (configurablecane$thingmanager != null)
         {
-            BlockState state = manager.getStateForPlacement(ctx);
+            BlockState state = configurablecane$thingmanager.getStateForPlacement(ctx);
             if (state != null)
             {
                 return state;
@@ -86,7 +88,7 @@ public abstract class CactusBlockMixin extends Block implements IConfigurable<Ca
             cancellable = true)
     private void configurableCane$allowSurviveOnTop(BlockState state, LevelReader world, BlockPos pos, CallbackInfoReturnable<Boolean> ci)
     {
-        if (manager != null && manager.isValidPosition(world, pos))
+        if (configurablecane$thingmanager != null && configurablecane$thingmanager.isValidPosition(world, pos))
         {
             ci.setReturnValue(true);
         }
@@ -96,7 +98,7 @@ public abstract class CactusBlockMixin extends Block implements IConfigurable<Ca
             at = @At("HEAD"), cancellable = true)
     public void configurableCane$customGrowthLogic(BlockState state, ServerLevel world, BlockPos pos, RandomSource rand, CallbackInfo ci)
     {
-        if (manager != null && manager.randomTick(state, world, pos, rand))
+        if (configurablecane$thingmanager != null && configurablecane$thingmanager.randomTick(state, world, pos, rand))
         {
             ci.cancel();
         }

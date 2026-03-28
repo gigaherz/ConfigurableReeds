@@ -2,10 +2,10 @@ plugins {
     id 'java-library'
     id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.moddev' version '2.0.99'
+    id 'net.neoforged.moddev' version '2.0.124'
 }
 
-neoForge.version = "21.7.17-beta"
+neoForge.version = "21.11.6-beta"
 version = "2.7.0"
 group = "gigaherz.configurablecane"
 base.archivesName = "ConfigurableCane-${neoForge.minecraftVersion}"
