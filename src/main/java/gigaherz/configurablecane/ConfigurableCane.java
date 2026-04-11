@@ -2,10 +2,16 @@ package gigaherz.configurablecane;
 
 import net.minecraft.client.color.block.BlockTintSources;
 import net.minecraft.client.renderer.BiomeColors;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CactusBlock;
 import net.minecraft.world.level.block.SugarCaneBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -29,12 +35,26 @@ public class ConfigurableCane
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
 
     public static final DeferredBlock<SugarCaneBlock> SUGAR_CANE_TOP = BLOCKS.registerBlock("sugar_cane_top",
-            props -> new SugarCaneBlock(props.overrideLootTable(Blocks.SUGAR_CANE.getLootTable())),
+            props -> new SugarCaneBlock(props.overrideLootTable(Blocks.SUGAR_CANE.getLootTable()).overrideDescription("block.minecraft.sugar_cane")){
+                @Deprecated
+                @Override
+                protected ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData)
+                {
+                    return Items.SUGAR_CANE.getDefaultInstance();
+                }
+            },
             () -> Block.Properties.ofFullCopy(Blocks.SUGAR_CANE)
     );
 
     public static final DeferredBlock<CactusBlock> CACTUS_TOP = BLOCKS.registerBlock("cactus_top",
-            props -> new CactusBlock(props.overrideLootTable(Blocks.CACTUS.getLootTable())),
+            props -> new CactusBlock(props.overrideLootTable(Blocks.CACTUS.getLootTable()).overrideDescription("block.minecraft.cactus")){
+                @Deprecated
+                @Override
+                protected ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData)
+                {
+                    return Items.CACTUS.getDefaultInstance();
+                }
+            },
             () -> Block.Properties.ofFullCopy(Blocks.CACTUS)
     );
 
