@@ -1,16 +1,18 @@
 package gigaherz.configurablecane.mixin;
 
+import gigaherz.configurablecane.AdditionalBlockDataAttachment;
 import gigaherz.configurablecane.ConfigurableThing;
 import gigaherz.configurablecane.IConfigurable;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.SugarCaneBlock;
-import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SugarCaneBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -19,21 +21,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import javax.annotation.Nullable;
 
 @Mixin(SugarCaneBlock.class)
-public class SugarCaneBlockMixin extends Block implements IConfigurable<SugarCaneBlock>
+public class SugarCaneBlockMixin extends Block implements IConfigurable
 {
-    private ConfigurableThing manager;
+    @Unique
+    private ConfigurableThing configurablecane$manager;
 
     @Nullable
     @Override
     public final ConfigurableThing configurableCane$getManager()
     {
-        return manager;
+        return configurablecane$manager;
     }
 
     @Override
     public final void configurableCane$setManager(ConfigurableThing manager)
     {
-        this.manager = manager;
+        this.configurablecane$manager = manager;
     }
 
     public SugarCaneBlockMixin(Properties properties)
@@ -56,25 +59,27 @@ public class SugarCaneBlockMixin extends Block implements IConfigurable<SugarCan
         return super.getStateForPlacement(ctx);
     }
 
-    //   public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
+    @Override
+    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston)
+    {
+        AdditionalBlockDataAttachment.cleanup(level, pos);
+    }
 
     @Inject(method = "canSurvive(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;)Z",
             at = @At("HEAD"), cancellable = true)
-    public void configurableCane$allowSurviveOnTop(BlockState state, LevelReader world, BlockPos pos, CallbackInfoReturnable<Boolean> ci)
+    public void configurableCane$allowSurviveOnTop(BlockState state, LevelReader level, BlockPos pos, CallbackInfoReturnable<Boolean> ci)
     {
-        if (configurableCane$getManager() != null && configurableCane$getManager().isValidPosition(world, pos))
+        if (configurableCane$getManager() != null && configurableCane$getManager().isValidPosition(level, pos))
         {
             ci.setReturnValue(true);
         }
     }
 
-    // public void randomTick(BlockState state, ServerLevel world, BlockPos pos, Random rand) {
-
     @Inject(method = "randomTick(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Lnet/minecraft/util/RandomSource;)V",
             at = @At("HEAD"), cancellable = true)
-    public void configurableCane$customGrowthLogic(BlockState state, ServerLevel world, BlockPos pos, RandomSource rand, CallbackInfo ci)
+    public void configurableCane$customGrowthLogic(BlockState state, ServerLevel level, BlockPos pos, RandomSource random, CallbackInfo ci)
     {
-        if (configurableCane$getManager() != null && configurableCane$getManager().randomTick(state, world, pos, rand))
+        if (configurableCane$getManager() != null && configurableCane$getManager().randomTick(state, level, pos, random))
         {
             ci.cancel();
         }

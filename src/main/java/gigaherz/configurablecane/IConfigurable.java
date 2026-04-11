@@ -3,14 +3,13 @@ package gigaherz.configurablecane;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CactusBlock;
 import net.minecraft.world.level.block.SugarCaneBlock;
 
 import javax.annotation.Nullable;
 
-public interface IConfigurable<T extends Block>
+public interface IConfigurable
 {
     @Nullable
     ConfigurableThing configurableCane$getManager();
@@ -22,29 +21,15 @@ public interface IConfigurable<T extends Block>
         return true;
     }
 
-    @SuppressWarnings("unchecked")
-    static <B extends Block> void initializeCactus(Block block, boolean isTop)
+    static void initializeCactus()
     {
-        ((IConfigurable<B>) block).configurableCane$setManager(new ConfigurableThing(
-                Configurations.SERVER.cactus,
-                CactusBlock.AGE,
-                isTop,
-                block,
-                Blocks.CACTUS,
-                ConfigurableCane.CACTUS_TOP.get(),
-                true, ((IConfigurable<B>) block)));
+        var conf = ((IConfigurable) Blocks.CACTUS);
+        conf.configurableCane$setManager(new ConfigurableThing(Configurations.SERVER.cactus, CactusBlock.AGE, Blocks.CACTUS, true, conf));
     }
 
-    @SuppressWarnings("unchecked")
-    static <B extends Block> void initializeSugarcane(Block block, boolean isTop)
+    static void initializeSugarcane()
     {
-        ((IConfigurable<B>) block).configurableCane$setManager(new ConfigurableThing(
-                Configurations.SERVER.sugarCane,
-                SugarCaneBlock.AGE,
-                isTop,
-                block,
-                Blocks.SUGAR_CANE,
-                ConfigurableCane.SUGAR_CANE_TOP.get(),
-                false, ((IConfigurable<B>) block)));
+        var conf = ((IConfigurable) Blocks.SUGAR_CANE);
+        conf.configurableCane$setManager(new ConfigurableThing(Configurations.SERVER.sugarCane, SugarCaneBlock.AGE, Blocks.SUGAR_CANE, false, conf));
     }
 }

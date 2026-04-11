@@ -1,5 +1,6 @@
 package gigaherz.configurablecane.mixin;
 
+import gigaherz.configurablecane.AdditionalBlockDataAttachment;
 import gigaherz.configurablecane.ConfigurableThing;
 import gigaherz.configurablecane.Configurations;
 import gigaherz.configurablecane.IConfigurable;
@@ -23,22 +24,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import javax.annotation.Nullable;
 
 @Mixin(CactusBlock.class)
-public abstract class CactusBlockMixin extends Block implements IConfigurable<CactusBlockMixin>
+public abstract class CactusBlockMixin extends Block implements IConfigurable
 {
     @Unique
-    private ConfigurableThing configurablecane$thingmanager;
+    private ConfigurableThing configurablecane$manager;
 
     @Nullable
     @Override
     public final ConfigurableThing configurableCane$getManager()
     {
-        return configurablecane$thingmanager;
+        return configurablecane$manager;
     }
 
     @Override
     public final void configurableCane$setManager(ConfigurableThing manager)
     {
-        this.configurablecane$thingmanager = manager;
+        this.configurablecane$manager = manager;
     }
 
     public CactusBlockMixin(Properties properties)
@@ -50,9 +51,9 @@ public abstract class CactusBlockMixin extends Block implements IConfigurable<Ca
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx)
     {
-        if (configurablecane$thingmanager != null)
+        if (configurablecane$manager != null)
         {
-            BlockState state = configurablecane$thingmanager.getStateForPlacement(ctx);
+            BlockState state = configurablecane$manager.getStateForPlacement(ctx);
             if (state != null)
             {
                 return state;
@@ -82,13 +83,18 @@ public abstract class CactusBlockMixin extends Block implements IConfigurable<Ca
         return true;
     }
 
+    @Override
+    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston)
+    {
+        AdditionalBlockDataAttachment.cleanup(level, pos);
+    }
 
     @Inject(method = "canSurvive(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;)Z",
             at = @At(value="INVOKE", ordinal = 1, target="Lnet/minecraft/world/level/LevelReader;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;"),
             cancellable = true)
-    private void configurableCane$allowSurviveOnTop(BlockState state, LevelReader world, BlockPos pos, CallbackInfoReturnable<Boolean> ci)
+    private void configurableCane$allowSurviveOnTop(BlockState state, LevelReader level, BlockPos pos, CallbackInfoReturnable<Boolean> ci)
     {
-        if (configurablecane$thingmanager != null && configurablecane$thingmanager.isValidPosition(world, pos))
+        if (configurablecane$manager != null && configurablecane$manager.isValidPosition(level, pos))
         {
             ci.setReturnValue(true);
         }
@@ -96,9 +102,9 @@ public abstract class CactusBlockMixin extends Block implements IConfigurable<Ca
 
     @Inject(method = "randomTick(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Lnet/minecraft/util/RandomSource;)V",
             at = @At("HEAD"), cancellable = true)
-    public void configurableCane$customGrowthLogic(BlockState state, ServerLevel world, BlockPos pos, RandomSource rand, CallbackInfo ci)
+    public void configurableCane$customGrowthLogic(BlockState state, ServerLevel level, BlockPos pos, RandomSource random, CallbackInfo ci)
     {
-        if (configurablecane$thingmanager != null && configurablecane$thingmanager.randomTick(state, world, pos, rand))
+        if (configurablecane$manager != null && configurablecane$manager.randomTick(state, level, pos, random))
         {
             ci.cancel();
         }

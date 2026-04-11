@@ -1,14 +1,14 @@
 package gigaherz.configurablecane;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.CommonHooks;
 
 import javax.annotation.Nullable;
@@ -17,26 +17,17 @@ public class ConfigurableThing
 {
     private final IntegerProperty ageProperty;
     private final Configurations.ServerConfig.ThingConfig config;
-    private final boolean isTop;
-    private final Block ownerBlock;
-    private final Block mainBlock;
-    private final Block topBlock;
+    private final Block thisBlock;
     private final boolean stupidEventFiresAbove;
     private final IConfigurable owner;
 
     public ConfigurableThing(Configurations.ServerConfig.ThingConfig config,
                              IntegerProperty ageProperty,
-                             boolean isTop,
-                             Block ownerBlock,
-                             Block mainBlock,
-                             Block topBlock,
+                             Block block,
                              boolean stupidEventFiresAbove, IConfigurable owner)
     {
         this.config = config;
-        this.isTop = isTop;
-        this.ownerBlock = ownerBlock;
-        this.mainBlock = mainBlock;
-        this.topBlock = topBlock;
+        this.thisBlock = block;
         this.ageProperty = ageProperty;
         this.stupidEventFiresAbove = stupidEventFiresAbove;
         this.owner = owner;
@@ -44,12 +35,12 @@ public class ConfigurableThing
 
     public boolean canPlaceOn(Block blockBelow)
     {
-        return blockBelow == mainBlock || blockBelow == topBlock;
+        return blockBelow == thisBlock;
     }
 
-    private BlockState randomAge(Level world, BlockState state, int maxAge)
+    private BlockState randomAge(Level level, BlockState state, int maxAge)
     {
-        return state.setValue(ageProperty, world.getRandom().nextInt(maxAge));
+        return state.setValue(ageProperty, level.getRandom().nextInt(maxAge));
     }
 
     public boolean isValidPosition(LevelReader world, BlockPos pos)
@@ -63,7 +54,7 @@ public class ConfigurableThing
     {
         if (Configurations.SERVER.cactus.kelpLikeGrowthValue)
         {
-            return randomAge(ctx.getLevel(), topBlock.defaultBlockState(), config.maxAgeValue);
+            return randomAge(ctx.getLevel(), thisBlock.defaultBlockState(), config.maxAgeValue);
         }
         else
         {
@@ -71,33 +62,33 @@ public class ConfigurableThing
         }
     }
 
-    private int getStackHeight(Level world, BlockPos pos, int limit)
+    private int getStackHeight(Level level, BlockPos pos, int limit)
     {
         int stackHeight = 1;
-        while (stackHeight < limit && world.getBlockState(pos.below(stackHeight)).getBlock() == mainBlock)
+        while (stackHeight < limit && level.getBlockState(pos.below(stackHeight)).getBlock() == thisBlock)
         {
             ++stackHeight;
         }
         return stackHeight;
     }
 
-    public boolean randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource rand)
+    public boolean randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource rand)
     {
         if (!config.enabledValue)
         {
             return false;
         }
 
-        if (!world.isAreaLoaded(pos, 1))
+        if (!level.isAreaLoaded(pos, 1))
             return true; // Forge: prevent growing cactus from loading unloaded chunks with block update
 
-        if (!state.canSurvive(world, pos))
+        if (!state.canSurvive(level, pos))
         {
-            world.destroyBlock(pos, true);
+            level.destroyBlock(pos, true);
             return true;
         }
 
-        if (!world.isEmptyBlock(pos.above()))
+        if (!level.isEmptyBlock(pos.above()))
             return true;
 
         int maxAge = config.maxAgeValue;
@@ -105,66 +96,70 @@ public class ConfigurableThing
 
         if (config.kelpLikeGrowthValue)
         {
-            kelpLikeGrowth(state, world, pos, maxAge, maxHeight, rand);
+            kelpLikeGrowth(state, level, pos, maxAge, maxHeight, rand);
         }
         else
         {
-            caneLikeGrowth(state, world, pos, maxAge, maxHeight, rand);
+            caneLikeGrowth(state, level, pos, maxAge, maxHeight, rand);
         }
 
         return true;
     }
 
-    private void caneLikeGrowth(BlockState state, ServerLevel world, BlockPos pos, int maxAge, int maxHeight, RandomSource rand)
+    private void caneLikeGrowth(BlockState state, ServerLevel level, BlockPos pos, int maxAge, int maxHeight, RandomSource rand)
     {
+        var isTop = AdditionalBlockDataAttachment.isTop(level, pos);
         if (isTop)
         {
             // When cane-like growth is configured, the special "top" block is not needed
-            world.setBlock(pos, mainBlock.defaultBlockState(), 2);
+            level.setBlock(pos, thisBlock.defaultBlockState(), 2);
+            AdditionalBlockDataAttachment.setTop(level, pos, false);
             return;
         }
 
         BlockPos eventPos = stupidEventFiresAbove ? pos.above() : pos;
-        if (CommonHooks.canCropGrow(world, eventPos, state, true))
+        if (CommonHooks.canCropGrow(level, eventPos, state, true))
         {
             int age = state.getValue(ageProperty);
-            int stackHeight = getStackHeight(world, pos, maxHeight);
-            if (age != 8 || owner.configurableCane$doSpecialGrowth(world, pos, age, stackHeight, rand))
+            int stackHeight = getStackHeight(level, pos, maxHeight);
+            if (age != 8 || owner.configurableCane$doSpecialGrowth(level, pos, age, stackHeight, rand))
             {
                 if (age >= maxAge)
                 {
                     if (stackHeight >= maxHeight)
                         return;
 
-                    world.setBlockAndUpdate(pos.above(), ownerBlock.defaultBlockState());
-                    world.setBlock(pos, state.setValue(ageProperty, 0), 4);
+                    level.setBlockAndUpdate(pos.above(), thisBlock.defaultBlockState());
+                    level.setBlock(pos, state.setValue(ageProperty, 0), 4);
                 }
                 else
                 {
-                    world.setBlock(pos, state.setValue(ageProperty, age + 1), 4);
+                    level.setBlock(pos, state.setValue(ageProperty, age + 1), 4);
                 }
             }
-            CommonHooks.fireCropGrowPost(world, pos, state);
+            CommonHooks.fireCropGrowPost(level, pos, state);
         }
     }
 
-    private void kelpLikeGrowth(BlockState state, ServerLevel world, BlockPos pos, int maxAge, int maxHeight, RandomSource rand)
+    private void kelpLikeGrowth(BlockState state, ServerLevel level, BlockPos pos, int maxAge, int maxHeight, RandomSource rand)
     {
+        var isTop = AdditionalBlockDataAttachment.isTop(level, pos);
         if (!isTop)
         {
             // When kelp-like growth is configured, the special "top" block is needed
-            world.setBlock(pos, randomAge(world, topBlock.defaultBlockState(), maxAge), 2);
+            level.setBlock(pos, randomAge(level, thisBlock.defaultBlockState(), maxAge), 2);
+            AdditionalBlockDataAttachment.setTop(level, pos, true);
             return;
         }
 
         BlockPos eventPos = stupidEventFiresAbove ? pos.above() : pos;
-        if (CommonHooks.canCropGrow(world, eventPos, state, true))
+        if (CommonHooks.canCropGrow(level, eventPos, state, true))
         {
             int age = state.getValue(ageProperty);
             if (age < maxAge && rand.nextDouble() < config.kelpLikeGrowthChanceValue)
             {
-                int stackHeight = getStackHeight(world, pos, maxHeight);
-                if (owner.configurableCane$doSpecialGrowth(world, pos, age, stackHeight, rand))
+                int stackHeight = getStackHeight(level, pos, maxHeight);
+                if (owner.configurableCane$doSpecialGrowth(level, pos, age, stackHeight, rand))
                 {
                     if (stackHeight >= maxHeight)
                         return;
@@ -173,11 +168,13 @@ public class ConfigurableThing
                     double random = config.kelpLikeAgeChanceValue - ageGrowthInt;
                     if (random > 0 && rand.nextDouble() < random)
                         ageGrowthInt++;
-                    world.setBlockAndUpdate(pos.above(), state.setValue(ageProperty, age + ageGrowthInt));
-                    world.setBlock(pos, mainBlock.defaultBlockState().setValue(ageProperty, 15), 2);
+                    level.setBlockAndUpdate(pos.above(), state.setValue(ageProperty, age + ageGrowthInt));
+                    AdditionalBlockDataAttachment.setTop(level, pos.above(), true);
+                    level.setBlock(pos, thisBlock.defaultBlockState().setValue(ageProperty, 15), 2);
+                    AdditionalBlockDataAttachment.setTop(level, pos, false);
                 }
             }
-            CommonHooks.fireCropGrowPost(world, pos, state);
+            CommonHooks.fireCropGrowPost(level, pos, state);
         }
     }
 }
