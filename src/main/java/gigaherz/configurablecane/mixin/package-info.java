@@ -1,7 +1,7 @@
-@MethodsReturnNonnullByDefault
+@NullMarked
 @ParametersAreNonnullByDefault
 package gigaherz.configurablecane.mixin;
 
-import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
+import org.jspecify.annotations.NullMarked;
 
 import javax.annotation.ParametersAreNonnullByDefault;

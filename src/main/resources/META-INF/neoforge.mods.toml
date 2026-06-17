@@ -20,13 +20,13 @@ config="configurablecane.mixins.json"
 [[dependencies.configurablecane]]
    modId="neoforge"
    type="required"
-   versionRange="[26.1.0.1-beta,)"
+   versionRange="[26.2,)"
    ordering="NONE"
    side="BOTH"
 [[dependencies.configurablecane]]
    modId="minecraft"
    type="required"
-   versionRange="[26.1,26.2)"
+   versionRange="[26.2,)"
    ordering="NONE"
    side="BOTH"
 

@@ -5,8 +5,8 @@ plugins {
     id 'net.neoforged.moddev' version '2.0.141'
 }
 
-neoForge.version = "26.1.2.30-beta"
-version = "3.0.1"
+neoForge.version = "26.2.0.1-beta"
+version = "3.1.0"
 group = "gigaherz.configurablecane"
 base.archivesName = "ConfigurableCane-${neoForge.minecraftVersion}"
 
@@ -29,17 +29,11 @@ neoForge {
         }
     }
 
-    parchment {
-        minecraftVersion="1.21.6"
-        mappingsVersion="BLEEDING-SNAPSHOT"
-    }
-
     mods {
         thismod {
             sourceSet(sourceSets.main)
         }
     }
-
 }
 
 jar {
