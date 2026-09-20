@@ -1,31 +1,19 @@
 plugins {
+    id 'java-library'
+    id 'eclipse'
+    id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.moddev' version '1.0.3'
+    id 'net.neoforged.moddev' version '2.0.141'
 }
 
+neoForge.version = "21.1.251"
 version = "2.5.4.1"
 group = "gigaherz.configurablecane"
-
-var minecraftVersion = project.neoForge.version.map { "1." + (it =~ /^(\d+(?:\.[1-9]\d*|))\./)[0][1] }
-base {
-    archivesName = minecraftVersion.map { "ConfigurableCane-${it}" }
-}
+base.archivesName = "ConfigurableCane-${neoForge.minecraftVersion}"
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
-}
-
 neoForge {
-    version = "21.0.86-beta"
-
-    mods {
-        thismod {
-            modSourceSets = [sourceSets.main]
-        }
-    }
-
     runs {
         // applies to all the run configs below
         configureEach {
@@ -42,6 +30,12 @@ neoForge {
         }
     }
 
+    mods {
+        thismod {
+            sourceSet(sourceSets.main)
+        }
+    }
+
     parchment {
         minecraftVersion = "1.21"
         mappingsVersion = "2024.07.07"
@@ -49,9 +43,7 @@ neoForge {
 }
 
 jar {
-    from('/') {
-        include 'LICENSE.txt'
-    }
+    from(files('LICENSE.txt'))
 
     manifest {
         attributes([
@@ -64,5 +56,17 @@ jar {
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
                 "MixinConfigs": "configurablecane.mixins.json"
         ])
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+
+// IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
     }
 }
